@@ -24,3 +24,4 @@ rojo = { name = "pesde/rojo", version = "^7.4.4", target = "lune" }
 
 [dependencies]
 react = { wally = "jsdotlua/react", version = "^17.2.1" }
+studiocomponents = { wally = "sircfenner/studiocomponents", version = "^1.2.0" }

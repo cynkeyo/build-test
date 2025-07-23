@@ -7,6 +7,9 @@
 	},
 	"pesde": {
 		"$path": "./pesde.toml"
+	},
+	"story": {
+		"$path": "story"
 	}
   }
 }

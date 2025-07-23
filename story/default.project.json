@@ -1,0 +1,12 @@
+{
+  "name": "roblox-build-test-story",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "roblox-build-test-story": {
+        "$path": "src"
+      }
+    }
+  }
+}

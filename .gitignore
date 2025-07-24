@@ -2,8 +2,8 @@
 /roblox-build-test.rbxlx
 
 # Roblox Studio lock files
-/*.rbxlx.lock
-/*.rbxl.lock
+/*.rbxm
+/*.lock
 
 # Packages
 /roblox_packages

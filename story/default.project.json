@@ -3,9 +3,21 @@
   "tree": {
     "$className": "DataModel",
 
-    "ReplicatedStorage": {
-      "roblox-build-test-story": {
-        "$path": "src"
+    "ServerStorage": {
+      "build-test-dev-container": {
+				"$className": "Folder",
+	"plugin": {
+		"$path": "../src",
+		"$properties": {
+			"Enabled": false
+		},
+		"packages": {
+			"$path": "../roblox_packages"
+		},
+		"pesde": {
+			"$path": "../pesde.toml"
+		}
+	}
       }
     }
   }

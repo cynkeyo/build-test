@@ -1,10 +1,13 @@
 local react = require(script.Parent.Parent.Parent.packages.react)
 local studiocomponents = require(script.Parent.Parent.Parent.packages.studiocomponents)
 
+-- local PluginMenuSeparator = PluginMenuSeparator
+local EditModeTracker = require(script.Parent.Parent.Parent.components.EditModeTracker)
 local Padding = require(script.Parent.Parent.Parent.components.Padding)
 local TrackedPart = require(script.Parent.Parent.Parent.components.TrackedPart)
 local PluginAction = require(script.Parent.Parent.Parent.components.plugin.PluginAction)
 local PluginMenu = require(script.Parent.Parent.Parent.components.plugin.PluginMenu)
+local PluginMenuSeparator = require(script.Parent.Parent.Parent.components.plugin.PluginMenuSeparator)
 local constants = require(script.Parent.Parent.Parent.constants)
 local useTheme = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
 local goodsignal = require(script.Parent.Parent.Parent.packages[".pesde"]["stravant_goodsignal@0.3.0"].goodsignal)
@@ -28,24 +31,32 @@ function EditMode()
 		ListLayout = e("UIListLayout", {
 			Padding = UDim.new(0, DEFAULT_TEXT_SIZE)
 		}),
-		TrackMenu = e("Frame", {
-			Size = UDim2.fromScale(1, 0),
-			AutomaticSize = Enum.AutomaticSize.XY,
-			BackgroundColor3 = Color3.new(1,1,1),
-		}, {
-			ListLayout = e("UIListLayout", {
-				FillDirection = Enum.FillDirection.Horizontal,
-				Padding = UDim.new(0, DEFAULT_TEXT_SIZE)
-			}),
-			TrackPartButton = e(studiocomponents.MainButton, {
-				Text = "Track",
-				Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2)
-			}),
-			UntrackPartButton = e(studiocomponents.MainButton, {
-				Text = "Untrack",
-				Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2)
-			})
-		}),
+		TrackMenu = e(EditModeTracker, {
+			OnTrack = function(parts)
+				local chs = game:GetService("ChangeHistoryService")
+				local record = chs:TryBeginRecording("TEST")
+				for _, part in pairs(parts) do
+					local adornee = Instance.new("SelectionBox")
+					adornee.Parent = part
+					adornee.Adornee = part
+				end
+
+				chs:FinishRecording(record, Enum.FinishRecordingOperation.Commit)
+			end,
+			OnUntrack = function(parts)
+				local chs = game:GetService("ChangeHistoryService")
+local PluginMenuSeparator = require(script.Parent.Parent.Parent.components.plugin.PluginMenuSeparator)
+				local record = chs:TryBeginRecording("TEST")
+				for _, part in pairs(parts) do
+					local selectBox = part:FindFirstChildOfClass("SelectionBox")
+					if selectBox then
+						selectBox.Parent = nil
+					end
+				end
+
+				chs:FinishRecording(record, Enum.FinishRecordingOperation.Commit)
+			end,
+		}),	
 		TrackedPartMenu = e("Frame", {
 			Size = UDim2.fromScale(1, 0),
 			BackgroundColor3 = theme:GetColor(

@@ -14,24 +14,27 @@ return {
 	PLUGIN_ACTIONS = {
 		HIGHLIGHT_PART = {
 			ID = "HIGHLIGHT_PART",
-			TEXT = "Highlight Part",
+			NAME = "Highlight Part",
 			STATUS_TIP = "Highlights the Selected Part(s)",
 			ICON_NAME = "rbxassetid://131319291327248",
 			ALLOW_BINDING = false
 		},
 		UNTRACK_PART = {
 			ID = "UNTRACK_PART",
-			TEXT = "Remove Part from Build Test",
+			NAME = "Remove Part from Build Test",
 			STATUS_TIP = "Removes the Part(s) from the Build Test Tracker",
 			ICON_NAME = "rbxassetid://78931432174335",
 			ALLOW_BINDING = true
 		},
 		TRACK_PART = {
 			ID = "TRACK_PART",
-			TEXT = "Add Part to Build Test",
+			NAME = "Add Part to Build Test",
 			STATUS_TIP = "Adds the Part(s) to the Build Test Tracker",
 			ICON_NAME = "rbxassetid://74738063772202",
 			ALLOW_BINDING = true
 		},
-	}
+	},
+	PLUGIN_TRACKED_INSTANCE_TAG = "BUILD_TEST_TRACKED_PART",
+	PLUGIN_INSTANCE_ID_ATTRIBUTE = "BUILD_TEST_PART_ID",
+	PLUGIN_SESSION_KEY = "BUILD_TEST_SESSION",
 }

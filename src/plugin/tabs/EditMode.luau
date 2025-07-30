@@ -1,13 +1,12 @@
 local react = require(script.Parent.Parent.Parent.packages.react)
 local studiocomponents = require(script.Parent.Parent.Parent.packages.studiocomponents)
 
--- local PluginMenuSeparator = PluginMenuSeparator
+local TrackedPartList = require(script.Parent.Parent.Parent.components.TrackedPartList)
 local EditModeTracker = require(script.Parent.Parent.Parent.components.EditModeTracker)
 local Padding = require(script.Parent.Parent.Parent.components.Padding)
 local TrackedPart = require(script.Parent.Parent.Parent.components.TrackedPart)
 local PluginAction = require(script.Parent.Parent.Parent.components.plugin.PluginAction)
 local PluginMenu = require(script.Parent.Parent.Parent.components.plugin.PluginMenu)
-local PluginMenuSeparator = require(script.Parent.Parent.Parent.components.plugin.PluginMenuSeparator)
 local constants = require(script.Parent.Parent.Parent.constants)
 local useTheme = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
 local goodsignal = require(script.Parent.Parent.Parent.packages[".pesde"]["stravant_goodsignal@0.3.0"].goodsignal)
@@ -32,26 +31,26 @@ function EditMode()
 			Padding = UDim.new(0, DEFAULT_TEXT_SIZE)
 		}),
 		TrackMenu = e(EditModeTracker, {
-			OnTrack = function(parts)
+			OnTrack = function(parts: {BasePart})
 				local chs = game:GetService("ChangeHistoryService")
+				local https = game:GetService("HttpService")
 				local record = chs:TryBeginRecording("TEST")
 				for _, part in pairs(parts) do
-					local adornee = Instance.new("SelectionBox")
-					adornee.Parent = part
-					adornee.Adornee = part
+					part:AddTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+
+					if part:GetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE) == nil then
+						part:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, https:GenerateGUID(false))
+					end
 				end
 
 				chs:FinishRecording(record, Enum.FinishRecordingOperation.Commit)
 			end,
-			OnUntrack = function(parts)
+			OnUntrack = function(parts: {BasePart})
 				local chs = game:GetService("ChangeHistoryService")
-local PluginMenuSeparator = require(script.Parent.Parent.Parent.components.plugin.PluginMenuSeparator)
 				local record = chs:TryBeginRecording("TEST")
 				for _, part in pairs(parts) do
-					local selectBox = part:FindFirstChildOfClass("SelectionBox")
-					if selectBox then
-						selectBox.Parent = nil
-					end
+					part:RemoveTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+					part:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, nil)
 				end
 
 				chs:FinishRecording(record, Enum.FinishRecordingOperation.Commit)
@@ -103,49 +102,50 @@ local PluginMenuSeparator = require(script.Parent.Parent.Parent.components.plugi
 				TrackedPartList = e(studiocomponents.ScrollFrame, {
 					Size = UDim2.fromScale(1, 1)
 				}, {
-					ActionMenu = e(PluginMenu, {
-						id = CONSTANTS.PLUGIN_MENUS.SELECTED_TRACKED_PART.ID,
-						title = CONSTANTS.PLUGIN_MENUS.SELECTED_TRACKED_PART.TITLE,
-						icon = CONSTANTS.PLUGIN_MENUS.SELECTED_TRACKED_PART.ICON,
-						openMenu = openSelectedMenu,
-					}, {
-						AddPart = e(PluginAction, {
-							id = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.ID,
-							text = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.TEXT,
-							iconName = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.ICON_NAME,
-							statusTip = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.STATUS_TIP,
-							triggered = function()
-								print("yeah")
-							end,
-							allowBinding = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.ALLOW_BINDING
-						}),
-						RemovePart = e(PluginAction, {
-							id = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.ID,
-							text = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.TEXT,
-							iconName = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.ICON_NAME,
-							statusTip = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.STATUS_TIP,
-							triggered = function()
-								print("yeah")
-							end,
-							allowBinding = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.ALLOW_BINDING
-						}),
-						HighlightPart = e(PluginAction, {
-							id = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.ID,
-							text = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.TEXT,
-							iconName = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.ICON_NAME,
-							statusTip = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.STATUS_TIP,
-							triggered = function()
-								print("yeah")
-							end,
-							allowBinding = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.ALLOW_BINDING
-						}),
-					}),
-					e(TrackedPart, {
-						OnActivated = function()
-							print("asdasdasd")
-							openSelectedMenu:Fire()
-						end
-					})
+					e(TrackedPartList)
+					-- ActionMenu = e(PluginMenu, {
+					-- 	id = CONSTANTS.PLUGIN_MENUS.SELECTED_TRACKED_PART.ID,
+					-- 	title = CONSTANTS.PLUGIN_MENUS.SELECTED_TRACKED_PART.TITLE,
+					-- 	icon = CONSTANTS.PLUGIN_MENUS.SELECTED_TRACKED_PART.ICON,
+					-- 	openMenu = openSelectedMenu,
+					-- }, {
+					-- 	AddPart = e(PluginAction, {
+					-- 		id = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.ID,
+					-- 		text = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.TEXT,
+					-- 		iconName = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.ICON_NAME,
+					-- 		statusTip = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.STATUS_TIP,
+					-- 		triggered = function()
+					-- 			print("yeah")
+					-- 		end,
+					-- 		allowBinding = CONSTANTS.PLUGIN_ACTIONS.TRACK_PART.ALLOW_BINDING
+					-- 	}),
+					-- 	RemovePart = e(PluginAction, {
+					-- 		id = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.ID,
+					-- 		text = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.TEXT,
+					-- 		iconName = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.ICON_NAME,
+					-- 		statusTip = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.STATUS_TIP,
+					-- 		triggered = function()
+					-- 			print("yeah")
+					-- 		end,
+					-- 		allowBinding = CONSTANTS.PLUGIN_ACTIONS.UNTRACK_PART.ALLOW_BINDING
+					-- 	}),
+					-- 	HighlightPart = e(PluginAction, {
+					-- 		id = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.ID,
+					-- 		text = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.TEXT,
+					-- 		iconName = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.ICON_NAME,
+					-- 		statusTip = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.STATUS_TIP,
+					-- 		triggered = function()
+					-- 			print("yeah")
+					-- 		end,
+					-- 		allowBinding = CONSTANTS.PLUGIN_ACTIONS.HIGHLIGHT_PART.ALLOW_BINDING
+					-- 	}),
+					-- }),
+					-- e(TrackedPart, {
+					-- 	OnActivated = function()
+					-- 		print("asdasdasd")
+					-- 		openSelectedMenu:Fire()
+					-- 	end
+					-- })
 				})
 			})
 		})

@@ -4,6 +4,7 @@ local studiocomponents = require(script.Parent.Parent.packages.studiocomponents)
 local e = react.createElement
 
 type trackedPartProps = {
+	Name: string,
 	OnActivated: () -> ()
 }
 
@@ -13,7 +14,7 @@ function TrackedPart(props: trackedPartProps)
 			Image = "rbxassetid://103885201279057",
 			Size = Vector2.new(16, 16),
 		},
-		Text = "BasePart",
+		Text = props.Name,
 		OnActivated = props.OnActivated
 
 	})

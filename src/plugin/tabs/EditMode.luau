@@ -1,10 +1,9 @@
 local react = require(script.Parent.Parent.Parent.packages.react)
 local studiocomponents = require(script.Parent.Parent.Parent.packages.studiocomponents)
 
-local TrackedPartList = require(script.Parent.Parent.Parent.components.TrackedPartList)
+local TrackedInstanceExplorer = require(script.Parent.Parent.Parent.components.TrackedInstanceExplorer)
 local EditModeTracker = require(script.Parent.Parent.Parent.components.EditModeTracker)
 local Padding = require(script.Parent.Parent.Parent.components.Padding)
-local TrackedPart = require(script.Parent.Parent.Parent.components.TrackedPart)
 local PluginAction = require(script.Parent.Parent.Parent.components.plugin.PluginAction)
 local PluginMenu = require(script.Parent.Parent.Parent.components.plugin.PluginMenu)
 local constants = require(script.Parent.Parent.Parent.constants)
@@ -82,7 +81,7 @@ function EditMode()
 				SortOrder = Enum.SortOrder.LayoutOrder
 			}),
 			TitleBar = e(studiocomponents.Label, {
-				Text = "Tracked Parts",
+				Text = "Tracked Instances	",
 				TextColorStyle = Enum.StudioStyleGuideColor.BrightText,
 				Size = UDim2.new(
 					UDim.new(1, 0),
@@ -102,7 +101,7 @@ function EditMode()
 				TrackedPartList = e(studiocomponents.ScrollFrame, {
 					Size = UDim2.fromScale(1, 1)
 				}, {
-					e(TrackedPartList)
+					e(TrackedInstanceExplorer)
 					-- ActionMenu = e(PluginMenu, {
 					-- 	id = CONSTANTS.PLUGIN_MENUS.SELECTED_TRACKED_PART.ID,
 					-- 	title = CONSTANTS.PLUGIN_MENUS.SELECTED_TRACKED_PART.TITLE,

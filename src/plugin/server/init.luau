@@ -36,8 +36,9 @@ local runtimeEnviroment: types.pluginRuntime
 local sessionChangeFetcher: thread?
 
 local buildTestServer = {}
-buildTestServer.instanceTracked = goodsignal.new() :: goodsignal.Signal<Instance>
-buildTestServer.instanceUntracked = goodsignal.new() :: goodsignal.Signal<Instance>
+
+buildTestServer.instanceTracked = nil :: RBXScriptSignal?
+buildTestServer.instanceUntracked = nil :: RBXScriptSignal?
 
 local function assertServerInitialization()
 	assert(currentPlugin, "Plugin instance isn't loaded in the server.")
@@ -86,7 +87,8 @@ function buildTestServer.init(plugin: Plugin)
 	currentPlugin = plugin
 	runtimeEnviroment = getRuntimeEnviroment()
 
-	print(runtimeEnviroment)
+	buildTestServer.instanceTracked = CollectionService:GetInstanceAddedSignal(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+	buildTestServer.instanceUntracked = CollectionService:GetInstanceRemovedSignal(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
 
 	sessionManager.init(plugin)
 
@@ -97,7 +99,7 @@ function buildTestServer.init(plugin: Plugin)
 			-- TODO: create a setting that allows the user to change the fetcher interval
 
 			while task.wait(1) do
-				print("cycle complete")
+				-- print("cycle complete")
 				fetchSessionChanges()
 			end
 		end)
@@ -131,7 +133,21 @@ function buildTestServer.getTrackedInstances()
 	return CollectionService:GetTagged(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
 end
 
+function buildTestServer.getInstanceTrackId(instance: Instance)
+	return instance:GetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE)
+end
+
+function buildTestServer.isInstanceTracked(instance: Instance): boolean
+	return instance:HasTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+end
+
 function buildTestServer.close()
+	local trackedConnection = buildTestServer.instanceTracked
+	local untrackedConnection = buildTestServer.instanceUntracked
+
+	buildTestServer.instanceTracked = nil
+	buildTestServer.instanceUntracked = nil
+
 	if runtimeEnviroment == "studioPlayTestClient" then
 		local serializedState = {}
 
@@ -143,7 +159,6 @@ function buildTestServer.close()
 		sessionManager.saveSessionToPlaceId(serializedState, game.PlaceId)
 		-- serialize playtest state
 	elseif runtimeEnviroment == "studioEditMode" then
-		print("i fired")
 		if sessionChangeFetcher then
 			task.cancel(sessionChangeFetcher)
 		end

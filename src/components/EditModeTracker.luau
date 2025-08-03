@@ -4,7 +4,8 @@ local react = require(script.Parent.Parent.packages.react)
 local studiocomponents = require(script.Parent.Parent.packages.studiocomponents)
 
 local useTheme = require(script.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
-local plural = require(script.Parent.Parent.plugin.utils.plural)
+local server = require(script.Parent.Parent.plugin.server)
+local plural = require(script.Parent.Parent.utils.plural)
 
 local STUDIO_COMPONENTS_CONSTANTS = studiocomponents.Constants
 local DEFAULT_TEXT_SIZE = STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize
@@ -23,19 +24,19 @@ function EditModeTracker(props: editModeTracker)
 
 	local theme = useTheme()
 
-	local selectedParts, setSelectedParts = react.useState({} :: {BasePart})
+	local selectedInstances, setSelectedInstances = react.useState({} :: {BasePart})
 
 	react.useEffect(function()
 		local connection = Selection.SelectionChanged:Connect(function()
-			local filteredParts = {}
+			local filteredInstances = {}
 
 			for _, instance in pairs(Selection:Get()) do
-				if instance:IsA("BasePart") then
-					table.insert(filteredParts, instance)
+				if server.canTrackInstance(instance) then
+					table.insert(filteredInstances, instance)
 				end
 			end
 
-			setSelectedParts(filteredParts)
+			setSelectedInstances(filteredInstances)
 		end)
 
 		return function()
@@ -43,7 +44,7 @@ function EditModeTracker(props: editModeTracker)
 		end
 	end, {})
 
-	local hasSelectedParts = #selectedParts > 0
+	local hasSelectedInstances = #selectedInstances > 0
 
 	return e("Frame", {
 		Size = UDim2.fromScale(1, 0),
@@ -76,14 +77,14 @@ function EditModeTracker(props: editModeTracker)
 		}, {
 			TitleBarLabel = e(studiocomponents.Label, {
 				Size = UDim2.new(1, 0, 0, DEFAULT_TEXT_SIZE * 2),
-				Text = "Part Tracker"
+				Text = "Instance Tracker"
 			}),
 		}),
 		SelectionInformation = e(studiocomponents.Label, {
 			LayoutOrder = 2,
 			Size = UDim2.new(1, 0, 0, DEFAULT_TEXT_SIZE * 2),
-			Text = if hasSelectedParts then `{#selectedParts} part{plural(#selectedParts)} selected.` else NO_PARTS_SELECTED_TEXT,
-			TextColorStyle = if hasSelectedParts then Enum.StudioStyleGuideColor.InfoText else Enum.StudioStyleGuideColor.MainText
+			Text = if hasSelectedInstances then `{#selectedInstances} instance{plural(#selectedInstances)} selected.` else NO_PARTS_SELECTED_TEXT,
+			TextColorStyle = if hasSelectedInstances then Enum.StudioStyleGuideColor.InfoText else Enum.StudioStyleGuideColor.MainText
 		}),
 		TrackButtons = e("Frame", {
 			BackgroundTransparency = 1,
@@ -99,17 +100,17 @@ function EditModeTracker(props: editModeTracker)
 			TrackPartButton = e(studiocomponents.MainButton, {
 				Text = "Track",
 				Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
-				Disabled = not hasSelectedParts,
+				Disabled = not hasSelectedInstances,
 				OnActivated = function()
-					onTrack(selectedParts)
+					onTrack(selectedInstances)
 				end,
 			}),
 			UntrackPartButton = e(studiocomponents.MainButton, {
 				Text = "Untrack",
 				Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
-				Disabled = not hasSelectedParts,
+				Disabled = not hasSelectedInstances,
 				OnActivated = function()
-					onUntrack(selectedParts)
+					onUntrack(selectedInstances)
 				end,
 			})
 		})

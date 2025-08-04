@@ -206,38 +206,36 @@ CreateInstanceMap = function(TargetInstance, IncludeDescendants, PrintProcess, M
 			if Status then
 				local ValueInOriginalInstance = __index(TargetInstance, Property)
 
-				if ValueInFreshInstance ~= ValueInOriginalInstance then
-					if not FoundValidPropertyOnce then
-						FoundValidPropertyOnce = true
-					end
+				if not FoundValidPropertyOnce then
+					FoundValidPropertyOnce = true
+				end
 
-					-- i just realized i can compress my serialized data further by generating a list of properties used in all of the instances and having that list in the main instance map like {Name = 1, BrickColor = 2, ...} and then the properties table of child instances would be {[1] = "name", [2] = enum.some.value}
-					local ShortenedProperty = PropertyCompression[Property]
+				-- i just realized i can compress my serialized data further by generating a list of properties used in all of the instances and having that list in the main instance map like {Name = 1, BrickColor = 2, ...} and then the properties table of child instances would be {[1] = "name", [2] = enum.some.value}
+				local ShortenedProperty = PropertyCompression[Property]
 
-					if not ShortenedProperty then
-						PropertyCompressionCount = PropertyCompressionCount + 1
+				if not ShortenedProperty then
+					PropertyCompressionCount = PropertyCompressionCount + 1
 
-						PropertyCompression[Property] = PropertyCompressionCount
-						ShortenedProperty = PropertyCompressionCount
-					end
+					PropertyCompression[Property] = PropertyCompressionCount
+					ShortenedProperty = PropertyCompressionCount
+				end
 
-					if typeof(ValueInOriginalInstance) == "Instance" then -- this is rare to occur
-						if ValueInOriginalInstance == MainInstanceReference then
-							PropertiesInMap[ShortenedProperty] = {["Pointer"] = {0}}
-						else
-							if ValueInOriginalInstance:IsDescendantOf(MainInstanceReference) then
-								local Pointer = CreateAddressFromDescendantToParent(ValueInOriginalInstance, MainInstanceReference)
-
-								if #Pointer >= 1 then
-									PropertiesInMap[ShortenedProperty] = {["Pointer"] = Pointer}
-								end
-							else
-								ThrowToConsole(`Skipping property "{Property}" of Instance "{TargetInstance:GetFullName()}" ({ClassName}) because the value of the property references an Instance that is not a descendant of the main Instance being serialized.`)
-							end
-						end
+				if typeof(ValueInOriginalInstance) == "Instance" then -- this is rare to occur
+					if ValueInOriginalInstance == MainInstanceReference then
+						PropertiesInMap[ShortenedProperty] = {["Pointer"] = {0}}
 					else
-						PropertiesInMap[ShortenedProperty] = ValueInOriginalInstance
+						if ValueInOriginalInstance:IsDescendantOf(MainInstanceReference) then
+							local Pointer = CreateAddressFromDescendantToParent(ValueInOriginalInstance, MainInstanceReference)
+
+							if #Pointer >= 1 then
+								PropertiesInMap[ShortenedProperty] = {["Pointer"] = Pointer}
+							end
+						else
+							ThrowToConsole(`Skipping property "{Property}" of Instance "{TargetInstance:GetFullName()}" ({ClassName}) because the value of the property references an Instance that is not a descendant of the main Instance being serialized.`)
+						end
 					end
+				else
+					PropertiesInMap[ShortenedProperty] = ValueInOriginalInstance
 				end
 			end
 		end
@@ -355,7 +353,7 @@ ReverseInstanceMap = function(Map, ParentOfInstance, DeserializeMeshPartsProperl
 	local UseInternalPropertyHooks = false -- CPU CYCLES MUST NOT GO TO WASTE!!
 	local CreationHook = InstanceCreationInternalHooks[ClassName]
 	local PropertyCompression = nil
-	local MainInstance
+	local MainInstance: Instance
 
 	if not PropertyCompression then
 		local PotentialPropertyCompression = Map.PC

@@ -16,7 +16,5 @@ return function(
 
 	action()
 
-	print(recording)
-
 	ChangeHistoryService:FinishRecording(recording, finishType)
 end

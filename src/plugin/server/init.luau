@@ -17,7 +17,7 @@ local SERIALIZATION_SETTINGS = {
 	IncludeDescendants = false,
 	CompressSerializedData = true,
 	EncodeInBase94 = true,
-	AnnoyingConsolePrints = true,
+	AnnoyingConsolePrints = false,
 	UseLegacySlowCompressor = false,
 	IncludeAttributes = false,
 	DisallowedProperties = nil
@@ -62,19 +62,14 @@ local function fetchSessionChanges()
 
 			for trackId, serializedData in pairs(playtestSession) do
 				local trackedInstance = trackedInstanceMap[trackId]
-				local a = os.clock()
 				local currentSerialization = MInstance.SerializeInstance(trackedInstance, SERIALIZATION_SETTINGS)
 
 				if currentSerialization == serializedData then
-					print(os.clock() - a)
 					print("no changes made, skip serialization")
 					continue
 				end
 
-				local b = os.clock()
-
 				MInstance.DeserializeInstance(serializedData, DESERIALIZATION_SETTINGS, trackedInstance)
-				print(os.clock() - b)
 			end
 
 			-- All changes to session done, set it to nil.

@@ -9,7 +9,7 @@ local plural = require(script.Parent.Parent.utils.plural)
 
 local STUDIO_COMPONENTS_CONSTANTS = studiocomponents.Constants
 local DEFAULT_TEXT_SIZE = STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize
-local NO_PARTS_SELECTED_TEXT = "Select parts to track."
+local NO_PARTS_SELECTED_TEXT = "Select instances to track."
 
 local e = react.createElement
 

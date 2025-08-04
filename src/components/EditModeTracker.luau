@@ -103,6 +103,7 @@ function EditModeTracker(props: editModeTracker)
 				Disabled = not hasSelectedInstances,
 				OnActivated = function()
 					onTrack(selectedInstances)
+					Selection:Set({})
 				end,
 			}),
 			UntrackPartButton = e(studiocomponents.MainButton, {
@@ -111,6 +112,7 @@ function EditModeTracker(props: editModeTracker)
 				Disabled = not hasSelectedInstances,
 				OnActivated = function()
 					onUntrack(selectedInstances)
+					Selection:Set({})
 				end,
 			})
 		})

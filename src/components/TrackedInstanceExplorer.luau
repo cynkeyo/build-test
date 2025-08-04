@@ -1,9 +1,7 @@
-local CollectionService = game:GetService("CollectionService")
 local Selection = game:GetService("Selection")
 
 local react = require(script.Parent.Parent.packages.react)
 
-local CONSTANTS = require(script.Parent.Parent.constants)
 local studiocomponents = require(script.Parent.Parent.packages.studiocomponents)
 local ExplorerTrackedInstance = require(script.Parent.ExplorerTrackedInstance)
 local server = require(script.Parent.Parent.plugin.server)
@@ -17,19 +15,26 @@ type trackedInstance = {
 	id: number
 }
 
+type explorerState = {
+	instances: {trackedInstance},
+	lastSelectedIndex: number?
+}
+
 type modifierKeys = {
 	shift: boolean,
 	control: boolean
 }
 
-local function createTrackedInstancesTable(instances: {Instance}): {trackedInstance}
+local function createExplorerState(instances: {Instance}): explorerState
 	local selectedInstances = {}
+	local lastSelectedTrackedInstance
 
 	for _, selectedInstance in pairs(Selection:Get()) do
 		if server.isInstanceTracked(selectedInstance) then
 			local id = server.getInstanceTrackId(selectedInstance)
 
 			selectedInstances[id] = selectedInstance
+			lastSelectedTrackedInstance = selectedInstance
 		end
 	end
 
@@ -45,23 +50,33 @@ local function createTrackedInstancesTable(instances: {Instance}): {trackedInsta
 		}
 	end
 
-	return trackedInstances
+	local lastSelectedIndex
+
+	for index, instance in pairs(trackedInstances) do
+		if instance.ref == lastSelectedTrackedInstance then
+			lastSelectedIndex = index
+		end
+	end
+
+	return {
+		instances = trackedInstances,
+		lastSelectedIndex = lastSelectedIndex
+	}
 end
 
 function TrackedInstanceExplorer()
-	local trackedInstances, setTrackedInstances = react.useState(createTrackedInstancesTable(server.getTrackedInstances()))
+	local explorerState, setExplorerState = react.useState(createExplorerState(server.getTrackedInstances()))
 	local modifierKeysRef = react.useRef({
 		shift = false,
 		control = false
 	} :: modifierKeys)
-	local lastSelectedInstance = react.useRef(nil :: Instance?)
 
 	react.useEffect(function()
 		local instanceAddedConnection = server.instanceTracked:Connect(function()
-			setTrackedInstances(createTrackedInstancesTable(server.getTrackedInstances()))
+			setExplorerState(createExplorerState(server.getTrackedInstances()))
 		end)
 		local instanceRemovedConnection = server.instanceUntracked:Connect(function()
-			setTrackedInstances(createTrackedInstancesTable(server.getTrackedInstances()))
+			setExplorerState(createExplorerState(server.getTrackedInstances()))
 		end)
 
 		return function()
@@ -72,7 +87,7 @@ function TrackedInstanceExplorer()
 
 	react.useEffect(function()
 		local connection = Selection.SelectionChanged:Connect(function()
-			setTrackedInstances(createTrackedInstancesTable(server.getTrackedInstances()))
+			setExplorerState(createExplorerState(server.getTrackedInstances()))
 		end)
 
 		return function()
@@ -81,9 +96,12 @@ function TrackedInstanceExplorer()
 	end)
 
 	local updateModifierKeys = react.useCallback(function(_, inputObject: InputObject)
-		task.wait()
-
 		local currentModifierKeys = modifierKeysRef.current
+
+		-- Don't cancel any inputs if we simply exited the window.
+		if inputObject.UserInputState == Enum.UserInputState.Change then
+			return
+		end
 
 		local state = inputObject.UserInputState == Enum.UserInputState.Begin
 		local modifierKey = modifierKey(inputObject)
@@ -96,46 +114,38 @@ function TrackedInstanceExplorer()
 	end)
 
 	local onInstanceLeftClick = react.useCallback(function(instance, index)
-		task.wait()
-		print(index)
-
 		local currentModifierKeys = modifierKeysRef.current
+		local lastSelectedIndex = explorerState.lastSelectedIndex
 
 		if currentModifierKeys.control then
-			print(trackedInstances[index])
-			if trackedInstances[index].selected then
+			if explorerState.instances[index].selected then
 				Selection:Remove({instance})
 			else
 				Selection:Add({instance})
 			end
 		elseif currentModifierKeys.shift and lastSelectedIndex then
-			-- If the index is greater than the last selected index we have to iterate up, otherwise go down.
 			local increment = if lastSelectedIndex >= index then -1 else 1
 
 			local instancesToSelect = {}
 
 			for instanceIndex = (lastSelectedIndex + increment), index, increment do
-				table.insert(instancesToSelect, trackedInstances[instanceIndex].ref)
+				table.insert(instancesToSelect, explorerState.instances[instanceIndex].ref)
 			end
 
 			Selection:Add(instancesToSelect)
 		else
 			Selection:Set({instance})
 		end
-		lastSelectedIndex = instance
-	end, {})
+	end, {explorerState})
 
-	local onInstanceRightClick = react.useCallback(function(instance, index)
+	local onInstanceRightClick = react.useCallback(function(instance)
 		Selection:Set({instance})
-
-
-		setTrackedInstances(createTrackedInstancesTable(server.getTrackedInstances()))
-		lastSelectedIndex = instance
+		print("open context menu")
 	end, {})
 
 	local children = {}
 
-	for index, instance in pairs(trackedInstances) do
+	for index, instance in pairs(explorerState.instances) do
 		local id = instance.id
 
 		children[id] = e(ExplorerTrackedInstance, {
@@ -148,15 +158,22 @@ function TrackedInstanceExplorer()
 		})
 	end
 
-	return e("Frame", {
+	return e("TextButton", {
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
 		[react.Event.InputBegan] = updateModifierKeys,
 		[react.Event.InputEnded] = updateModifierKeys,
-		[react.Event.InputChanged] = updateModifierKeys,
+		[react.Event.MouseButton1Click] = function()
+			Selection:Set({})
+		end,
 	}, {
 		e(studiocomponents.ScrollFrame, {
-			Size = UDim2.fromScale(1, 1)
+			Size = UDim2.fromScale(1, 1),
+			Layout = {
+				ClassName = "UIListLayout",
+				Padding = UDim.new(0, 1),
+				SortOrder = Enum.SortOrder.LayoutOrder
+			}
 		}, children)
 	})
 

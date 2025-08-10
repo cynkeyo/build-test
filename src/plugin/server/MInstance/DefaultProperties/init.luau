@@ -1,5 +1,3 @@
--- TODO: replace with ReflectionService when available
-
 local HttpService = game:GetService("HttpService")
 local ApiDump = script.Dump
 local IsApiInitialized = false

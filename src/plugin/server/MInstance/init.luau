@@ -298,7 +298,6 @@ InstanceCreationInternalHooks.MeshPart = function(Properties, InvertedPropertyCo
 	local Options = {}
 	local HandledProperties = {}
 
-	-- WASTE OF CPU CYCLES I KNOW.. TODO: FIX
 	for PropertyId, Value in pairs(Properties) do
 		local PropertyName = InvertedPropertyCompression[PropertyId]
 
@@ -626,8 +625,7 @@ Minstance.SerializeInstance = function(TargetInstance: Instance, SerializationSe
 			end)
 
 			if not Success then
-				if Compressed:match("String passed is too short to compress.") then -- TODO: implemetn proper fix and not this bandaid solution just beacause i have to sleep soon
-					-- TODO: implemetn proper fix and not this bandaid solution just beacause i have to sleep soon
+				if Compressed:match("String passed is too short to compress.") then
 					MainMap[string.rep("a", 20)] = true
 					BinaryEncoded = BufferEncoder.write(MainMap, nil, nil, true)
 					BinaryEncodedString = buffer_tostring(BinaryEncoded)

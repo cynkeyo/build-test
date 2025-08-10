@@ -1,5 +1,6 @@
 local HttpService = game:GetService("HttpService")
 local CollectionService = game:GetService("CollectionService")
+local Selection = game:GetService("Selection")
 
 local types = require(script.Parent.Parent.types)
 local MInstance : types.MInstanceModule  = require(script.MInstance)
@@ -22,6 +23,7 @@ local SERIALIZATION_SETTINGS = {
 	IncludeAttributes = false,
 	DisallowedProperties = nil
 }
+
 local DESERIALIZATION_SETTINGS = {
 	IsDataCompressed = true,
 	IsBase94Encoded = true,
@@ -108,24 +110,72 @@ function buildTestServer.canTrackInstance(instance: Instance)
 	return MInstance.IsClassCreatable(instance.ClassName)
 end
 
-function buildTestServer.trackInstance(instance: Instance)
-	assert(buildTestServer.canTrackInstance(instance), `Can't track instance of class: {instance.ClassName}`)
+function buildTestServer.filterValidInstances(instances: {Instance})
+    local filteredInstances = {}
 
+    for _, instance in pairs(instances) do
+        for _, ignoreClass in pairs(CONSTANTS.PLUGIN_IGNORE_CLASSES) do
+            if instance:IsA(ignoreClass) then
+                continue
+            end
+        end
+
+        table.insert(filteredInstances, instance)
+    end
+
+    return filteredInstances
+end
+
+function buildTestServer.trackInstances(instances: {Instance})
 	recordedAction(function() 
-		instance:AddTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
-		instance:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, HttpService:GenerateGUID(false))
+        for _, instance in pairs(instances) do
+            assert(buildTestServer.canTrackInstance(instance), `Can't track instance of class: {instance.ClassName}`)
+
+            instance:AddTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+            instance:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, HttpService:GenerateGUID(false))
+
+            for _, descendant in pairs(instance:GetDescendants()) do
+                if buildTestServer.canTrackInstance(descendant) then
+                    descendant:AddTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+                    descendant:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, HttpService:GenerateGUID(false))
+                end
+            end
+        end
 	end, TRACK_PART_ACTION.ID, TRACK_PART_ACTION.NAME)
 end
 
-function buildTestServer.untrackInstance(instance: Instance)
+function buildTestServer.untrackInstances(instances: {Instance})
 	recordedAction(function() 
-		instance:RemoveTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
-		instance:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, nil)
+        for _, instance in pairs(instances) do
+            instance:RemoveTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+            instance:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, nil)
+
+            for _, descendant in pairs(instance:GetDescendants()) do
+                if buildTestServer.canTrackInstance(descendant) then
+                    descendant:RemoveTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+                    descendant:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, nil)
+                end
+            end
+        end
 	end, TRACK_PART_ACTION.ID, TRACK_PART_ACTION.NAME)
 end
 
 function buildTestServer.getTrackedInstances()
 	return CollectionService:GetTagged(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
+end
+
+function buildTestServer.getSelectedTrackedInstances()
+	local selectedTrackedInstances = {}
+
+	for _, instance in pairs(Selection:Get()) do
+		if not instance:HasTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG) then
+			continue
+		end
+
+		table.insert(selectedTrackedInstances, instance)
+	end
+
+  return selectedTrackedInstances
 end
 
 function buildTestServer.getInstanceTrackId(instance: Instance)
@@ -137,9 +187,6 @@ function buildTestServer.isInstanceTracked(instance: Instance): boolean
 end
 
 function buildTestServer.close()
-	local trackedConnection = buildTestServer.instanceTracked
-	local untrackedConnection = buildTestServer.instanceUntracked
-
 	buildTestServer.instanceTracked = nil
 	buildTestServer.instanceUntracked = nil
 

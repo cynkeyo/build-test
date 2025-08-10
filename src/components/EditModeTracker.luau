@@ -14,29 +14,21 @@ local NO_PARTS_SELECTED_TEXT = "Select instances to track."
 local e = react.createElement
 
 type editModeTracker = {
-	OnTrack: ({BasePart}) -> (),
-	OnUntrack: ({BasePart}) -> (),
+	-- OnTrack: ({BasePart}) -> (),
+	-- OnUntrack: ({BasePart}) -> (),
 }
 
 function EditModeTracker(props: editModeTracker)
-	local onTrack = props.OnTrack
-	local onUntrack = props.OnUntrack
+	-- local onTrack = props.OnTrack
+	-- local onUntrack = props.OnUntrack
 
 	local theme = useTheme()
 
-	local selectedInstances, setSelectedInstances = react.useState({} :: {BasePart})
+	local selectedInstances, setSelectedInstances = react.useState(server.getSelectedTrackedInstances())
 
 	react.useEffect(function()
 		local connection = Selection.SelectionChanged:Connect(function()
-			local filteredInstances = {}
-
-			for _, instance in pairs(Selection:Get()) do
-				if server.canTrackInstance(instance) then
-					table.insert(filteredInstances, instance)
-				end
-			end
-
-			setSelectedInstances(filteredInstances)
+			setSelectedInstances(server.filterValidInstances(Selection:Get()))
 		end)
 
 		return function()
@@ -45,6 +37,8 @@ function EditModeTracker(props: editModeTracker)
 	end, {})
 
 	local hasSelectedInstances = #selectedInstances > 0
+
+    print(hasSelectedInstances)
 
 	return e("Frame", {
 		Size = UDim2.fromScale(1, 0),
@@ -102,7 +96,7 @@ function EditModeTracker(props: editModeTracker)
 				Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
 				Disabled = not hasSelectedInstances,
 				OnActivated = function()
-					onTrack(selectedInstances)
+                    server.trackInstances(selectedInstances)
 					Selection:Set({})
 				end,
 			}),
@@ -111,7 +105,7 @@ function EditModeTracker(props: editModeTracker)
 				Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
 				Disabled = not hasSelectedInstances,
 				OnActivated = function()
-					onUntrack(selectedInstances)
+                    server.untrackInstances(selectedInstances)
 					Selection:Set({})
 				end,
 			})

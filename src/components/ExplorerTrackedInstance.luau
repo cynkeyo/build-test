@@ -1,11 +1,8 @@
-local Selection = game:GetService("Selection")
 local StudioService = game:GetService("StudioService")
 
 local react = require(script.Parent.Parent.packages.react)
 local studiocomponents = require(script.Parent.Parent.packages.studiocomponents)
 local useTheme = require(script.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
-local ui_labs = require(script.Parent.Parent.packages["ui-labs"])
-local UserInputService = ui_labs.Environment.UserInput
 
 local STUDIO_COMPONENTS_CONSTANTS = studiocomponents.Constants
 local DEFAULT_COLOR = Enum.StudioStyleGuideColor.MainBackground
@@ -13,7 +10,6 @@ local SELECTED_COLOR = Color3.fromRGB(49, 59, 95)
 local HOVER_COLOR = Enum.StudioStyleGuideColor.Button
 
 local e = react.createElement
-local selectedColor = Color3.fromRGB(49, 59, 95)
 
 type trackedInstanceProps = {
 	Instance: Instance,
@@ -22,19 +18,6 @@ type trackedInstanceProps = {
 	OnRightClick: (instance: Instance, index: number) -> (),
 	OnLeftClick: (instance: Instance, index: number) -> (),
 }
-
-local function isInstanceSelected(instance)
-	local currentInstanceSelected = false
-
-	for _, selectedInstance in pairs(Selection:Get()) do
-		if selectedInstance == instance then
-			currentInstanceSelected = true
-			break
-		end
-	end
-
-	return currentInstanceSelected
-end
 
 function ExplorerTrackedInstance(props: trackedInstanceProps)
 	local instance = props.Instance

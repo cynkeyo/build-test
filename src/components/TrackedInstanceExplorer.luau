@@ -26,17 +26,17 @@ type modifierKeys = {
 }
 
 local function createExplorerState(instances: {Instance}): explorerState
-	local selectedInstances = {}
+	local selectedTrackedInstances = server.getSelectedTrackedInstances()
 	local lastSelectedTrackedInstance
-
-	for _, selectedInstance in pairs(Selection:Get()) do
-		if server.isInstanceTracked(selectedInstance) then
-			local id = server.getInstanceTrackId(selectedInstance)
-
-			selectedInstances[id] = selectedInstance
-			lastSelectedTrackedInstance = selectedInstance
-		end
-	end
+	--
+	-- for _, selectedInstance in pairs(Selection:Get()) do
+	-- 	if server.isInstanceTracked(selectedInstance) then
+	-- 		local id = server.getInstanceTrackId(selectedInstance)
+	--
+	-- 		selectedInstances[id] = selectedInstance
+	-- 		lastSelectedTrackedInstance = selectedInstance
+	-- 	end
+	-- end
 
 	local trackedInstances = {}
 
@@ -45,7 +45,7 @@ local function createExplorerState(instances: {Instance}): explorerState
 
 		trackedInstances[i] = {
 			ref = instance,
-			selected = if selectedInstances[id] then true else false,
+			selected = if table.find(selectedTrackedInstances, instance) then true else false,
 			id = id,
 		}
 	end

@@ -19,7 +19,7 @@ local e = react.createElement
 function EditMode()
 	local theme = useTheme()
 
-	local openSelectedMenu = goodsignal.new()
+	-- local openSelectedMenu = goodsignal.new()
 
 	return e(studiocomponents.Background, {
 		Size = UDim2.fromScale(1, 1),
@@ -29,32 +29,7 @@ function EditMode()
 		ListLayout = e("UIListLayout", {
 			Padding = UDim.new(0, DEFAULT_TEXT_SIZE)
 		}),
-		TrackMenu = e(EditModeTracker, {
-			OnTrack = function(parts: {BasePart})
-				local chs = game:GetService("ChangeHistoryService")
-				local https = game:GetService("HttpService")
-				local record = chs:TryBeginRecording("TEST")
-				for _, part in pairs(parts) do
-					part:AddTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
-
-					if part:GetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE) == nil then
-						part:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, https:GenerateGUID(false))
-					end
-				end
-
-				chs:FinishRecording(record, Enum.FinishRecordingOperation.Commit)
-			end,
-			OnUntrack = function(parts: {BasePart})
-				local chs = game:GetService("ChangeHistoryService")
-				local record = chs:TryBeginRecording("TEST")
-				for _, part in pairs(parts) do
-					part:RemoveTag(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
-					part:SetAttribute(CONSTANTS.PLUGIN_INSTANCE_ID_ATTRIBUTE, nil)
-				end
-
-				chs:FinishRecording(record, Enum.FinishRecordingOperation.Commit)
-			end,
-		}),	
+		TrackMenu = e(EditModeTracker),	
 		TrackedPartMenu = e("Frame", {
 			Size = UDim2.fromScale(1, 0),
 			BackgroundColor3 = theme:GetColor(

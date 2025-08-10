@@ -1,5 +1,5 @@
-local react = require(script.Parent.Parent.packages.react)
-local studiocomponents = require(script.Parent.Parent.packages.studiocomponents)
+local react = require(script.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
+local studiocomponents = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
 
 function Padding()
     return react.createElement("UIPadding", {

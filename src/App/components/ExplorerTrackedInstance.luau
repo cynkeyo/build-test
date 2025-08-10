@@ -1,8 +1,8 @@
 local StudioService = game:GetService("StudioService")
 
-local react = require(script.Parent.Parent.packages.react)
-local studiocomponents = require(script.Parent.Parent.packages.studiocomponents)
-local useTheme = require(script.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
+local react = require(script.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
+local studiocomponents = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
+local useTheme = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
 
 local STUDIO_COMPONENTS_CONSTANTS = studiocomponents.Constants
 local DEFAULT_COLOR = Enum.StudioStyleGuideColor.MainBackground

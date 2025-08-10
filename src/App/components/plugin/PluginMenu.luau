@@ -1,8 +1,7 @@
+local react = require(script.Parent.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
+local usePlugin = require(script.Parent.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.usePlugin)
+local goodsignal = require(script.Parent.Parent.Parent.Parent.packages[".pesde"]["stravant_goodsignal@0.3.0"].goodsignal)
 local PluginMenuContext = require(script.Parent.Parent.Parent.contexts.PluginMenuContext)
-local react = require(script.Parent.Parent.Parent.packages.react)
-local goodsignal = require(script.Parent.Parent.Parent.packages[".pesde"]["stravant_goodsignal@0.3.0"].goodsignal)
-
-local usePlugin = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.usePlugin)
 
 local e = react.createElement
 

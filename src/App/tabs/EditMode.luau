@@ -1,12 +1,12 @@
 local react = require(script.Parent.Parent.Parent.packages.react)
 local studiocomponents = require(script.Parent.Parent.Parent.packages.studiocomponents)
 
-local TrackedInstanceExplorer = require(script.Parent.Parent.Parent.components.TrackedInstanceExplorer)
-local EditModeTracker = require(script.Parent.Parent.Parent.components.EditModeTracker)
-local Padding = require(script.Parent.Parent.Parent.components.Padding)
 local useTheme = require(
 	script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme
 )
+local EditModeTracker = require(script.Parent.Parent.components.EditModeTracker)
+local Padding = require(script.Parent.Parent.components.Padding)
+local TrackedInstanceExplorer = require(script.Parent.Parent.components.TrackedInstanceExplorer)
 
 local STUDIO_COMPONENTS_CONSTANTS = studiocomponents.Constants
 local DEFAULT_TEXT_SIZE = STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize

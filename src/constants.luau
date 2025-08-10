@@ -37,6 +37,10 @@ return {
 	PLUGIN_TRACKED_INSTANCE_TAG = "BUILD_TEST_TRACKED_INSTANCE",
 	PLUGIN_INSTANCE_ID_ATTRIBUTE = "BUILD_TEST_PART_ID",
 	PLUGIN_SESSION_KEY = "BUILD_TEST_SESSION",
+    PLUGIN_DUMP_FOLDER = {
+        NAME = "BuildTestSessionDump",
+        DEFAULT_LOCATION = game:GetService("ServerStorage")
+    },
     PLUGIN_IGNORE_CLASSES = {
         "BaseScript"
     }

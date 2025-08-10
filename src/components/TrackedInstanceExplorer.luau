@@ -158,6 +158,7 @@ function TrackedInstanceExplorer()
 		})
 	end
 
+    -- NOTE: Use TextButton since it makes it easier to check for an unselect click
 	return e("TextButton", {
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),

@@ -9,19 +9,7 @@ type changesListProps = {
 }
 
 function ChangesList(props: changesListProps)
-    local changedInstances, setChangedInstances = react.useState(server.getChangedInstancesFromSession())
-
-    print(changedInstances)
-
-    react.useEffect(function()
-        local connection = server.workingSessionChanged:Connect(function()
-            setChangedInstances(server.getChangedInstancesFromSession())
-        end)
-
-        return function()
-            connection:Disconnect()
-        end
-    end, {})
+    local changedInstances = props.changedInstances
 
     local children = {}
 

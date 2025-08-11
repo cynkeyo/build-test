@@ -4,6 +4,7 @@ local PluginProvider = require(
 	script.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Components.PluginProvider
 )
 local PluginWidget = require(script.components.plugin.PluginWidget)
+local StudioEdit = require(script.pages.StudioEdit)
 local EditMode = require(script.tabs.EditMode)
 local e = react.createElement
 
@@ -21,11 +22,9 @@ function App(props: appProps)
 			id = constants.PLUGIN_ID,
 			title = `{constants.PLUGIN_NAME} {constants.PLUGIN_VERSION}`,
 			enabled = true,
-            minSize = Vector2.new(240, 240),
-            initialFloatSize = Vector2.new(240, 240),
-		}, {
-            e(EditMode)
-        }),
+			minSize = Vector2.new(240, 240),
+			initialFloatSize = Vector2.new(240, 240),
+		}, e(StudioEdit)),
 	})
 end
 

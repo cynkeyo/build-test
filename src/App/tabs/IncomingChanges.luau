@@ -13,7 +13,13 @@ local DEFAULT_TEXT_SIZE = STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize
 
 local e = react.createElement
 
-function IncomingChanges()
+export type incomingChangesProps = {
+	changedInstances: { Instance },
+}
+
+function IncomingChanges(props: incomingChangesProps)
+	local changedInstances = props.changedInstances
+
 	local theme = useTheme()
 
 	return e(studiocomponents.Background, {
@@ -39,7 +45,9 @@ function IncomingChanges()
 				Text = "Incoming Changes",
 			}),
 		}),
-		ChangeList = e(ChangesList),
+		ChangeList = e(ChangesList, {
+			changedInstances = changedInstances,
+		}),
 		QuickActionMenu = e("Frame", {
 			LayoutOrder = 2,
 			Size = UDim2.fromScale(1, 0),

@@ -3,7 +3,7 @@ local react = require(script.Parent.packages[".pesde"]["jsdotlua_react-reconcile
 local PluginProvider = require(
 	script.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Components.PluginProvider
 )
-local PluginWidget = require(script.components.plugin.Widget)
+local PluginWidget = require(script.components.plugin.PluginWidget)
 local EditMode = require(script.tabs.EditMode)
 local e = react.createElement
 

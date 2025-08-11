@@ -78,16 +78,12 @@ local function fetchSessionChanges()
 
 			if not trackedInstance then
 				-- Instance is destroyed, clear it.
-				print("didnt find instance")
 				playtestSession[trackId] = nil
 			end
-
-			print(trackedInstance)
 
 			local currentSerialization = MInstance.SerializeInstance(trackedInstance, SERIALIZATION_SETTINGS)
 
 			if currentSerialization == serializedData then
-				print("instance didnt change")
 				playtestSession[trackId] = nil
 			end
 		end
@@ -235,10 +231,7 @@ function buildTestServer.getChangedInstancesFromSession(): { Instance }
 
 	local changedInstances = {}
 
-	print("called")
-
 	if not currentWorkingSession then
-		print("what")
 		return {}
 	end
 
@@ -249,8 +242,6 @@ function buildTestServer.getChangedInstancesFromSession(): { Instance }
 			table.insert(changedInstances, instance)
 		end
 	end
-
-	print(changedInstances)
 
 	return changedInstances
 end
@@ -313,8 +304,6 @@ function buildTestServer.acceptUnderFolder(trackIdList: { string })
 
 		local deserializedInstance = MInstance.DeserializeInstance(serializedData, DESERIALIZATION_SETTINGS)
 
-		print(deserializedInstance)
-		print(dumpFolder)
 		deserializedInstance.Parent = dumpFolder
 
 		currentWorkingSession[trackId] = nil

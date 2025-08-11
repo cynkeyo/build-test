@@ -142,7 +142,6 @@ function TrackedInstanceExplorer()
 
 	local onInstanceRightClick = react.useCallback(function(instance)
 		Selection:Set({instance})
-		print("open context menu")
 	end, {})
 
 	local children = {}

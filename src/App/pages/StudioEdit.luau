@@ -17,8 +17,6 @@ function StudioEdit()
         end
     end, {})
 
-    print(changedInstances)
-
     if #changedInstances > 0 then
         return e(IncomingChanges, {
             changedInstances = changedInstances

@@ -37,8 +37,6 @@ function EditModeTracker(props: editModeTracker)
 
 	local hasSelectedInstances = #selectedInstances > 0
 
-    print(hasSelectedInstances)
-
 	return e("Frame", {
 		Size = UDim2.fromScale(1, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,

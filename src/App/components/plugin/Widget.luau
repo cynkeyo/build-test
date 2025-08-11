@@ -4,6 +4,7 @@ local ReactRoblox =
 local PluginContext = require(
 	script.Parent.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Contexts.PluginContext
 )
+local usePlugin = require(script.Parent.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.usePlugin)
 
 local e = React.createElement
 
@@ -17,7 +18,7 @@ export type widgetProps = {
 }
 
 function Widget(props: widgetProps)
-	local plugin: Plugin = React.useContext(PluginContext)
+	local plugin = usePlugin()
 
 	local id = props.id
 	local title = props.title
@@ -31,6 +32,7 @@ function Widget(props: widgetProps)
 	local dockWidgetInfo = React.useMemo(function()
 		return DockWidgetPluginGuiInfo.new(
 			Enum.InitialDockState.Float,
+            enabled,
 			true,
 			initialFloatSize.X,
 			initialFloatSize.Y,

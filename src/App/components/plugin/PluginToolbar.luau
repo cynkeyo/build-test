@@ -1,7 +1,5 @@
 local react = require(script.Parent.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
-local PluginContext = require(
-	script.Parent.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Contexts.PluginContext
-)
+local usePlugin = require(script.Parent.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.usePlugin)
 local PluginToolbarContext = require(script.Parent.Parent.Parent.contexts.PluginToolbarContext)
 
 local e = react.createElement
@@ -12,7 +10,7 @@ export type pluginToolbarProps = {
 }
 
 function PluginToolbar(props: pluginToolbarProps)
-	local plugin: Plugin = react.useContext(PluginContext)
+    local plugin = usePlugin()
 
 	local name = props.Name
 

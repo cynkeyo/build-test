@@ -283,6 +283,8 @@ function buildTestServer.acceptOverOriginal(trackId: string)
 		else
 			error(`Instance with the track ID {trackId} doesn't exist`)
 		end
+
+        currentWorkingSession[trackId] = nil
 	end
 
     buildTestServer.workingSessionChanged:Fire()
@@ -299,6 +301,8 @@ function buildTestServer.acceptUnderFolder(trackId: string)
 		local deserializedInstance = MInstance:DeserializeInstance(serializedData, DESERIALIZATION_SETTINGS)
 
 		deserializedInstance.Parent = dumpFolder
+
+        currentWorkingSession[trackId] = nil
 	end
 
     buildTestServer.workingSessionChanged:Fire()

@@ -297,8 +297,8 @@ function buildTestServer.acceptUnderFolder(trackId: string)
 		if not serializedData then
 			error(`No serialized data found for instance with track ID {trackId}`)
 		end
-
-		local deserializedInstance = MInstance:DeserializeInstance(serializedData, DESERIALIZATION_SETTINGS)
+        print(DESERIALIZATION_SETTINGS)
+		local deserializedInstance = MInstance.DeserializeInstance(serializedData, DESERIALIZATION_SETTINGS)
 
 		deserializedInstance.Parent = dumpFolder
 

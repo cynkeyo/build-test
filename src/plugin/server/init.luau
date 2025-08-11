@@ -119,14 +119,16 @@ function buildTestServer.init(plugin: Plugin)
 	sessionManager.init(plugin)
 
 	if runtimeEnviroment == "studioEditMode" then
-		local dumpFolder = CONSTANTS.PLUGIN_DUMP_FOLDER.DEFAULT_LOCATION:FindFirstChild(CONSTANTS.PLUGIN_DUMP_FOLDER.NAME)
+		local foundFolder = CONSTANTS.PLUGIN_DUMP_FOLDER.DEFAULT_LOCATION:FindFirstChild(CONSTANTS.PLUGIN_DUMP_FOLDER.NAME)
 
-		if not dumpFolder then
+		if not foundFolder then
 			local newFolder = Instance.new("Folder")
 			newFolder.Name = CONSTANTS.PLUGIN_DUMP_FOLDER.NAME
 			newFolder.Parent = CONSTANTS.PLUGIN_DUMP_FOLDER.DEFAULT_LOCATION
 
 			dumpFolder = newFolder
+        else
+            dumpFolder = foundFolder
 		end
 
 		sessionChangeFetcher = task.spawn(function()
@@ -297,9 +299,11 @@ function buildTestServer.acceptUnderFolder(trackId: string)
 		if not serializedData then
 			error(`No serialized data found for instance with track ID {trackId}`)
 		end
-        print(DESERIALIZATION_SETTINGS)
+
 		local deserializedInstance = MInstance.DeserializeInstance(serializedData, DESERIALIZATION_SETTINGS)
 
+        print(deserializedInstance)
+        print(dumpFolder)
 		deserializedInstance.Parent = dumpFolder
 
         currentWorkingSession[trackId] = nil

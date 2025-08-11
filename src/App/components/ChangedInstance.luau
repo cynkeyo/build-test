@@ -23,6 +23,7 @@ type trackedInstanceProps = {
 
 function ChangedInstance(props: trackedInstanceProps)
 	local name = props.Name
+    local trackId = props.TrackId
 	local layoutOrder = props.LayoutOrder
 	local className = props.ClassName
 	local onAcceptOverOriginal = props.OnAcceptOverOriginal
@@ -90,7 +91,9 @@ function ChangedInstance(props: trackedInstanceProps)
 					RectSize = Vector2.new(16, 16),
 					RectOffset = Vector2.new(0, 0),
 				},
-                OnActivated = onAcceptOverOriginal,
+                OnActivated = function()
+                    onAcceptOverOriginal(trackId)
+                end,
 			}),
 			AcceptUnderFolderButton = e(studiocomponents.Button, {
 				LayoutOrder = 2,
@@ -101,7 +104,9 @@ function ChangedInstance(props: trackedInstanceProps)
 					RectSize = Vector2.new(16, 16),
 					RectOffset = Vector2.new(0, 0),
 				},
-                OnActivated = onAcceptUnderFolder,
+                OnActivated = function()
+                    onAcceptUnderFolder(trackId)
+                end,
 			}),
 			DeclineButton = e(studiocomponents.Button, {
 				LayoutOrder = 2,
@@ -112,7 +117,9 @@ function ChangedInstance(props: trackedInstanceProps)
 					RectSize = Vector2.new(16, 16),
 					RectOffset = Vector2.new(0, 0),
 				},
-                OnActivated = onDecline,
+                OnActivated = function()
+                    onDecline(trackId)
+                end,
 			}),
 		}),
 	})

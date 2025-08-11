@@ -61,9 +61,9 @@ local function fetchSessionChanges()
 
 	if playtestSession then
 		-- temporarily clear the session to work on
-        if currentWorkingSession then
-            return
-        end
+        -- if currentWorkingSession then
+        --     return
+        -- end
 
 		local trackedInstanceMap = {}
 
@@ -73,28 +73,31 @@ local function fetchSessionChanges()
 		end
 
 		-- remove unchanged present instances from working session data
-		-- for trackId, serializedData in pairs(playtestSession) do
-		-- 	local trackedInstance = trackedInstanceMap[trackId]
-		--
-		-- 	if trackedInstance == nil then
-		-- 		-- Instance is destroyed, clear it.
-		--           print("didnt find instance")
-		-- 		playtestSession[trackId] = nil
-		-- 	end
-		--
-		-- 	local currentSerialization = MInstance.SerializeInstance(trackedInstance, SERIALIZATION_SETTINGS)
-		--
-		-- 	if currentSerialization == serializedData then
-		--               print("instance didnt change")
-		-- 		playtestSession[trackId] = nil
-		-- 	end
-		-- end
+		for trackId, serializedData in pairs(playtestSession) do
+			local trackedInstance = trackedInstanceMap[trackId]
+
+			if not trackedInstance then
+				-- Instance is destroyed, clear it.
+		          print("didnt find instance")
+				playtestSession[trackId] = nil
+			end
+
+            print(trackedInstance)
+
+			local currentSerialization = MInstance.SerializeInstance(trackedInstance, SERIALIZATION_SETTINGS)
+
+			if currentSerialization == serializedData then
+		              print("instance didnt change")
+				playtestSession[trackId] = nil
+			end
+		end
 
         -- print("hello")
         -- print(playtestSession)
 
-		-- sessionManager.saveSessionToPlaceId(nil, game.placeId)
+		sessionManager.saveSessionToPlaceId(nil, game.placeId)
 		currentWorkingSession = playtestSession
+        buildTestServer.workingSessionChanged:Fire()
 
 		-- recordedAction(function()
 		--
@@ -223,9 +226,9 @@ function buildTestServer.isInstanceTracked(instance: Instance): boolean
 end
 
 function buildTestServer.getChangedInstancesFromSession(): { Instance }
-    if true then
-        return getTrackedInstances()
-    end
+    -- if true then
+    --     return getTrackedInstances()
+    -- end
 
 	local changedInstances = {}
 
@@ -253,6 +256,8 @@ function buildTestServer.declineChange(trackId: string)
 	if currentWorkingSession then
 		currentWorkingSession[trackId] = nil
 	end
+
+    buildTestServer.workingSessionChanged:Fire()
 end
 
 function buildTestServer.acceptOverOriginal(trackId: string)
@@ -279,6 +284,8 @@ function buildTestServer.acceptOverOriginal(trackId: string)
 			error(`Instance with the track ID {trackId} doesn't exist`)
 		end
 	end
+
+    buildTestServer.workingSessionChanged:Fire()
 end
 
 function buildTestServer.acceptUnderFolder(trackId: string)
@@ -293,6 +300,8 @@ function buildTestServer.acceptUnderFolder(trackId: string)
 
 		deserializedInstance.Parent = dumpFolder
 	end
+
+    buildTestServer.workingSessionChanged:Fire()
 end
 
 function buildTestServer.close()

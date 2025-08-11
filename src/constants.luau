@@ -33,6 +33,27 @@ return {
 			ICON_NAME = "rbxassetid://74738063772202",
 			ALLOW_BINDING = true
 		},
+        ACCEPT_OVER_ORIGINAL = {
+			ID = "ACCEPT_OVER_ORIGINAL",
+			NAME = "Accept over original",
+			STATUS_TIP = "Accepts the incoming changes over the original instance",
+			ICON_NAME = "rbxassetid://74738063772202",
+			ALLOW_BINDING = false
+        },
+        ACCEPT_UNDER_FOLDER = {
+			ID = "ACCEPT_UNDER_FOLDER",
+			NAME = "Accept under folder",
+			STATUS_TIP = "Saves the incoming changes to a new instance under the dump folder",
+			ICON_NAME = "rbxassetid://74738063772202",
+			ALLOW_BINDING = false
+        },
+        DECLINE_CHANGE = {
+			ID = "DECLINE_CHANGES",
+			NAME = "Decline change",
+			STATUS_TIP = "Decline the change(s) made to an instance",
+			ICON_NAME = "rbxassetid://74738063772202",
+			ALLOW_BINDING = false
+        },
 	},
 	PLUGIN_TRACKED_INSTANCE_TAG = "BUILD_TEST_TRACKED_INSTANCE",
 	PLUGIN_INSTANCE_ID_ATTRIBUTE = "BUILD_TEST_PART_ID",

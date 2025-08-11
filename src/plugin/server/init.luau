@@ -73,22 +73,22 @@ local function fetchSessionChanges()
 		end
 
 		-- remove unchanged present instances from working session data
-		for trackId, serializedData in pairs(playtestSession) do
-			local trackedInstance = trackedInstanceMap[trackId]
-
-			if trackedInstance == nil then
-				-- Instance is destroyed, clear it.
-            print("didnt find instance")
-				playtestSession[trackId] = nil
-			end
-
-			local currentSerialization = MInstance.SerializeInstance(trackedInstance, SERIALIZATION_SETTINGS)
-
-			if currentSerialization == serializedData then
-                print("instance didnt change")
-				playtestSession[trackId] = nil
-			end
-		end
+		-- for trackId, serializedData in pairs(playtestSession) do
+		-- 	local trackedInstance = trackedInstanceMap[trackId]
+		--
+		-- 	if trackedInstance == nil then
+		-- 		-- Instance is destroyed, clear it.
+		--           print("didnt find instance")
+		-- 		playtestSession[trackId] = nil
+		-- 	end
+		--
+		-- 	local currentSerialization = MInstance.SerializeInstance(trackedInstance, SERIALIZATION_SETTINGS)
+		--
+		-- 	if currentSerialization == serializedData then
+		--               print("instance didnt change")
+		-- 		playtestSession[trackId] = nil
+		-- 	end
+		-- end
 
         -- print("hello")
         -- print(playtestSession)

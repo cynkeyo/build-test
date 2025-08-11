@@ -1,5 +1,5 @@
 {
-  "name": "roblox-build-test",
+  "name": "build-test",
   "tree": {
 	"$path": "src",
 	"packages": {

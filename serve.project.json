@@ -1,0 +1,14 @@
+{
+    "name": "build-test-dev",
+    "tree": {
+        "$className": "DataModel",
+        "ServerStorage": {
+            "build-test-dev-container": {
+                "$className": "Folder",
+                "build-test": {
+                    "$path": "model.project.json"
+                }
+            }
+        }
+    }
+}

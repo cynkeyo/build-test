@@ -61,9 +61,9 @@ local function fetchSessionChanges()
 
 	if playtestSession then
 		-- temporarily clear the session to work on
-        -- if currentWorkingSession then
-        --     return
-        -- end
+		-- if currentWorkingSession then
+		--     return
+		-- end
 
 		local trackedInstanceMap = {}
 
@@ -78,26 +78,26 @@ local function fetchSessionChanges()
 
 			if not trackedInstance then
 				-- Instance is destroyed, clear it.
-		          print("didnt find instance")
+				print("didnt find instance")
 				playtestSession[trackId] = nil
 			end
 
-            print(trackedInstance)
+			print(trackedInstance)
 
 			local currentSerialization = MInstance.SerializeInstance(trackedInstance, SERIALIZATION_SETTINGS)
 
 			if currentSerialization == serializedData then
-		              print("instance didnt change")
+				print("instance didnt change")
 				playtestSession[trackId] = nil
 			end
 		end
 
-        -- print("hello")
-        -- print(playtestSession)
+		-- print("hello")
+		-- print(playtestSession)
 
 		sessionManager.saveSessionToPlaceId(nil, game.placeId)
 		currentWorkingSession = playtestSession
-        buildTestServer.workingSessionChanged:Fire()
+		buildTestServer.workingSessionChanged:Fire()
 
 		-- recordedAction(function()
 		--
@@ -114,12 +114,13 @@ function buildTestServer.init(plugin: Plugin)
 	buildTestServer.instanceTracked = CollectionService:GetInstanceAddedSignal(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
 	buildTestServer.instanceUntracked =
 		CollectionService:GetInstanceRemovedSignal(CONSTANTS.PLUGIN_TRACKED_INSTANCE_TAG)
-    buildTestServer.workingSessionChanged = goodsignal.new()
+	buildTestServer.workingSessionChanged = goodsignal.new()
 
 	sessionManager.init(plugin)
 
 	if runtimeEnviroment == "studioEditMode" then
-		local foundFolder = CONSTANTS.PLUGIN_DUMP_FOLDER.DEFAULT_LOCATION:FindFirstChild(CONSTANTS.PLUGIN_DUMP_FOLDER.NAME)
+		local foundFolder =
+			CONSTANTS.PLUGIN_DUMP_FOLDER.DEFAULT_LOCATION:FindFirstChild(CONSTANTS.PLUGIN_DUMP_FOLDER.NAME)
 
 		if not foundFolder then
 			local newFolder = Instance.new("Folder")
@@ -127,8 +128,8 @@ function buildTestServer.init(plugin: Plugin)
 			newFolder.Parent = CONSTANTS.PLUGIN_DUMP_FOLDER.DEFAULT_LOCATION
 
 			dumpFolder = newFolder
-        else
-            dumpFolder = foundFolder
+		else
+			dumpFolder = foundFolder
 		end
 
 		sessionChangeFetcher = task.spawn(function()
@@ -228,16 +229,16 @@ function buildTestServer.isInstanceTracked(instance: Instance): boolean
 end
 
 function buildTestServer.getChangedInstancesFromSession(): { Instance }
-    -- if true then
-    --     return getTrackedInstances()
-    -- end
+	-- if true then
+	--     return getTrackedInstances()
+	-- end
 
 	local changedInstances = {}
 
-    print("called")
+	print("called")
 
 	if not currentWorkingSession then
-        print("what")
+		print("what")
 		return {}
 	end
 
@@ -248,22 +249,29 @@ function buildTestServer.getChangedInstancesFromSession(): { Instance }
 			table.insert(changedInstances, instance)
 		end
 	end
-    
-    print(changedInstances)
+
+	print(changedInstances)
 
 	return changedInstances
 end
 
-function buildTestServer.declineChange(trackId: string)
-	if currentWorkingSession then
+function buildTestServer.declineChange(trackIdList: { string })
+	if not currentWorkingSession then
+		return
+	end
+
+	for _, trackId in pairs(trackIdList) do
 		currentWorkingSession[trackId] = nil
 	end
 
-    buildTestServer.workingSessionChanged:Fire()
+	buildTestServer.workingSessionChanged:Fire()
 end
 
-function buildTestServer.acceptOverOriginal(trackId: string)
-	if currentWorkingSession then
+function buildTestServer.acceptOverOriginal(trackIdList: { string })
+	if not currentWorkingSession then
+		return
+	end
+	for _, trackId in pairs(trackIdList) do
 		local serializedData = currentWorkingSession[trackId]
 
 		if not serializedData then
@@ -286,14 +294,17 @@ function buildTestServer.acceptOverOriginal(trackId: string)
 			error(`Instance with the track ID {trackId} doesn't exist`)
 		end
 
-        currentWorkingSession[trackId] = nil
+		currentWorkingSession[trackId] = nil
 	end
 
-    buildTestServer.workingSessionChanged:Fire()
+	buildTestServer.workingSessionChanged:Fire()
 end
 
-function buildTestServer.acceptUnderFolder(trackId: string)
-	if currentWorkingSession then
+function buildTestServer.acceptUnderFolder(trackIdList: { string })
+	if not currentWorkingSession then
+		return
+	end
+	for _, trackId in pairs(trackIdList) do
 		local serializedData = currentWorkingSession[trackId]
 
 		if not serializedData then
@@ -302,22 +313,22 @@ function buildTestServer.acceptUnderFolder(trackId: string)
 
 		local deserializedInstance = MInstance.DeserializeInstance(serializedData, DESERIALIZATION_SETTINGS)
 
-        print(deserializedInstance)
-        print(dumpFolder)
+		print(deserializedInstance)
+		print(dumpFolder)
 		deserializedInstance.Parent = dumpFolder
 
-        currentWorkingSession[trackId] = nil
+		currentWorkingSession[trackId] = nil
 	end
 
-    buildTestServer.workingSessionChanged:Fire()
+	buildTestServer.workingSessionChanged:Fire()
 end
 
 function buildTestServer.close()
-    buildTestServer.workingSessionChanged:DisconnectAll()
+	buildTestServer.workingSessionChanged:DisconnectAll()
 
 	buildTestServer.instanceTracked = nil
 	buildTestServer.instanceUntracked = nil
-    buildTestServer.workingSessionChanged = nil
+	buildTestServer.workingSessionChanged = nil
 
 	if runtimeEnviroment == "studioPlayTestClient" then
 		local serializedState = {}

@@ -23,13 +23,13 @@ function ChangesList(props: changesListProps)
             Name = changedInstance.Name,
             ClassName = changedInstance.ClassName,
             OnAcceptOverOriginal = function(trackId)
-                server.acceptOverOriginal(trackId)
+                server.acceptOverOriginal({trackId})
             end,
             OnAcceptUnderFolder = function(trackId)
-                server.acceptUnderFolder(trackId)
+                server.acceptUnderFolder({trackId})
             end,
             OnDecline = function(trackId)
-                server.declineChange(trackId)
+                server.declineChange({trackId})
             end,
         })
     end

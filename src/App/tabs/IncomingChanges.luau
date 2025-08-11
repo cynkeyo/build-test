@@ -4,6 +4,7 @@ local studiocomponents =
 local useTheme = require(
 	script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme
 )
+local server = require(script.Parent.Parent.Parent.plugin.server)
 local ChangedInstance = require(script.Parent.Parent.components.ChangedInstance)
 local ChangesList = require(script.Parent.Parent.components.ChangesList)
 local Padding = require(script.Parent.Parent.components.Padding)
@@ -88,18 +89,34 @@ function IncomingChanges(props: incomingChangesProps)
 					ItemLineAlignment = Enum.ItemLineAlignment.Center,
 					HorizontalFlex = Enum.UIFlexAlignment.Fill,
 				}),
-				TrackPartButton = e(studiocomponents.MainButton, {
+				AcceptOverOriginalButton = e(studiocomponents.MainButton, {
 					Text = "Save over original",
 					Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
 					OnActivated = function()
-						print("save over original")
+						local trackIdList = {}
+
+						for _, trackedInstance in pairs(changedInstances) do
+							local trackId = server.getInstanceTrackId(trackedInstance)
+
+							table.insert(trackIdList, trackId)
+						end
+
+						server.acceptOverOriginal(trackIdList)
 					end,
 				}),
-				UntrackPartButton = e(studiocomponents.MainButton, {
+				AcceptUnderFolderButton = e(studiocomponents.MainButton, {
 					Text = "Save under folder",
 					Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
 					OnActivated = function()
-						print("save under folder")
+						local trackIdList = {}
+
+						for _, trackedInstance in pairs(changedInstances) do
+							local trackId = server.getInstanceTrackId(trackedInstance)
+
+							table.insert(trackIdList, trackId)
+						end
+
+						server.acceptUnderFolder(trackIdList)
 					end,
 				}),
 			}),
@@ -108,7 +125,15 @@ function IncomingChanges(props: incomingChangesProps)
 				Text = "Dismiss",
 				Size = UDim2.new(UDim.new(1, 0), UDim.new(0, DEFAULT_TEXT_SIZE * 2)),
 				OnActivated = function()
-					print("dismiss")
+					local trackIdList = {}
+
+					for _, trackedInstance in pairs(changedInstances) do
+						local trackId = server.getInstanceTrackId(trackedInstance)
+
+						table.insert(trackIdList, trackId)
+					end
+
+					server.declineChange(trackIdList)
 				end,
 			}),
 		}),

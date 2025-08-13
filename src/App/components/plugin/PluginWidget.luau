@@ -14,6 +14,7 @@ export type widgetProps = {
 	enabled: boolean?,
 	minSize: Vector2?,
 	initialFloatSize: Vector2?,
+    onClose: () -> (),
 	children: React.ReactNode,
 }
 
@@ -25,6 +26,7 @@ function Widget(props: widgetProps)
 	local enabled = if props.enabled ~= nil then props.enabled else true
 	local minSize = props.minSize or Vector2.zero
 	local initialFloatSize = props.initialFloatSize or Vector2.new(200, 200)
+    local onClose = props.onClose
     local children = props.children
 
 	local dockWidget: DockWidgetPluginGui?, setDockWidget = React.useState(nil :: DockWidgetPluginGui?)
@@ -42,11 +44,14 @@ function Widget(props: widgetProps)
 	end, {})
 
     React.useEffect(function()
-        local newWidget = plugin:CreateDockWidgetPluginGui(id, dockWidgetInfo)
+        local newWidget: DockWidgetPluginGui = plugin:CreateDockWidgetPluginGui(id, dockWidgetInfo)
         newWidget.Name = title
         newWidget.Title = title
         newWidget.ResetOnSpawn = false
         newWidget.Enabled = enabled
+
+        local connection = newWidget:BindToClose(onClose)
+
         setDockWidget(newWidget)
 
         return function()

@@ -35,6 +35,7 @@ function App(props: appProps)
 				text = "Build Test",
 				tooltip = "Open Plugin Widget",
 				active = widgetOpen,
+				iconAsset = "rbxassetid://72981511939628",
 				onClick = function()
 					setWidgetOpen(function(currentOpen)
 						return not currentOpen

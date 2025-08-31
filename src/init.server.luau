@@ -1,7 +1,7 @@
 local App = require(script.App)
 local react = require(script.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
 local react_roblox = require(script.packages[".pesde"]["jsdotlua_react-roblox@17.2.1"]["react-roblox"])
-local server = require(script.plugin.server)
+local server = require(script.server)
 
 local container = Instance.new("Folder")
 container.Parent = game:GetService("CoreGui")

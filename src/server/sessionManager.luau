@@ -1,7 +1,6 @@
 local HttpService = game:GetService("HttpService")
-
-local constants = require(script.Parent.Parent.Parent.constants)
-local types = require(script.Parent.Parent.Parent.types)
+local constants = require(script.Parent.Parent.constants)
+local types = require(script.Parent.Parent.types)
 
 local CONSTANTS = constants
 

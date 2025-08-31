@@ -4,7 +4,7 @@ local studiocomponents =
 local useTheme = require(
 	script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme
 )
-local server = require(script.Parent.Parent.Parent.plugin.server)
+local server = require(script.Parent.Parent.Parent.server)
 local ChangedInstance = require(script.Parent.Parent.components.ChangedInstance)
 local ChangesList = require(script.Parent.Parent.components.ChangesList)
 local Padding = require(script.Parent.Parent.components.Padding)

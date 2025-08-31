@@ -4,7 +4,7 @@ local Selection = game:GetService("Selection")
 local ExplorerTrackedInstance = require(script.Parent.ExplorerTrackedInstance)
 local react = require(script.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
 local studiocomponents = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
-local server = require(script.Parent.Parent.Parent.plugin.server)
+local server = require(script.Parent.Parent.Parent.server)
 local modifierKey = require(script.Parent.Parent.Parent.utils.modifierKey)
 
 local e = react.createElement

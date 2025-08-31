@@ -1,5 +1,5 @@
 local react = require(script.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
-local server = require(script.Parent.Parent.Parent.plugin.server)
+local server = require(script.Parent.Parent.Parent.server)
 local EditMode = require(script.Parent.Parent.tabs.EditMode)
 local IncomingChanges = require(script.Parent.Parent.tabs.IncomingChanges)
 local e = react.createElement

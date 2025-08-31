@@ -3,14 +3,12 @@ local CollectionService = game:GetService("CollectionService")
 local PlayerEmulatorService = game:GetService("PlayerEmulatorService")
 local Selection = game:GetService("Selection")
 
-local types = require(script.Parent.Parent.types)
+local types = require(script.Parent.types)
 local MInstance: types.MInstanceModule = require(script.MInstance)
-local constants = require(script.Parent.Parent.constants)
-local instanceof =
-	require(script.Parent.Parent.packages[".pesde"]["jsdotlua_instance-of@1.2.7"]["instance-of"].instanceof)
-local goodsignal = require(script.Parent.Parent.packages[".pesde"]["stravant_goodsignal@0.3.0"].goodsignal)
-local getRuntimeEnviroment = require(script.Parent.Parent.utils.getRuntimeEnviroment)
-local recordedAction = require(script.Parent.Parent.utils.recordedAction)
+local constants = require(script.Parent.constants)
+local goodsignal = require(script.Parent.packages[".pesde"]["stravant_goodsignal@0.3.0"].goodsignal)
+local getRuntimeEnviroment = require(script.Parent.utils.getRuntimeEnviroment)
+local recordedAction = require(script.Parent.utils.recordedAction)
 local sessionManager = require(script.sessionManager)
 
 local CONSTANTS = constants

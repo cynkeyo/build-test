@@ -4,13 +4,7 @@ return {
 	PLUGIN_NAME = "Build Test",
 	PLUGIN_ID = "Build Test",
 	PLUGIN_VERSION = pesde.version,
-	PLUGIN_MENUS = {
-		SELECTED_TRACKED_PART = {
-			ID = "SELECTED_TRACKED_PART",
-			TITLE = "Selected tracked part",
-			ICON = ""
-		}
-	},
+    PLUGIN_DATE_FORMAT = "*t",
 	PLUGIN_ACTIONS = {
 		HIGHLIGHT_PART = {
 			ID = "HIGHLIGHT_PART",
@@ -55,14 +49,4 @@ return {
 			ALLOW_BINDING = false
         },
 	},
-	PLUGIN_TRACKED_INSTANCE_TAG = "BUILD_TEST_TRACKED_INSTANCE",
-	PLUGIN_INSTANCE_ID_ATTRIBUTE = "BUILD_TEST_PART_ID",
-	PLUGIN_SESSION_KEY = "BUILD_TEST_SESSION",
-    PLUGIN_DUMP_FOLDER = {
-        NAME = "BuildTestSessionDump",
-        DEFAULT_LOCATION = game:GetService("ServerStorage")
-    },
-    PLUGIN_IGNORE_CLASSES = {
-        "BaseScript"
-    }
 }

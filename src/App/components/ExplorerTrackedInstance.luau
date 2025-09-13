@@ -1,8 +1,11 @@
 local StudioService = game:GetService("StudioService")
 
 local react = require(script.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
-local studiocomponents = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
-local useTheme = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
+local studiocomponents =
+	require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
+local useTheme = require(
+	script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme
+)
 
 local STUDIO_COMPONENTS_CONSTANTS = studiocomponents.Constants
 local DEFAULT_COLOR = Enum.StudioStyleGuideColor.MainBackground
@@ -43,52 +46,54 @@ function ExplorerTrackedInstance(props: trackedInstanceProps)
 
 	local ClassIcon = StudioService:GetClassIcon(instance.ClassName)
 
-	return e("TextButton", {
-		Size = UDim2.new(
-			UDim.new(1, 0),
-			UDim.new(0, 24)
-		),
-		BorderSizePixel = 0,
-		AutoButtonColor = false,
+	return e("Frame", {
+		Size = UDim2.new(UDim.new(1, 0), UDim.new(0, 24)),
 		BackgroundTransparency = 0,
-		BackgroundColor3 = if selected then SELECTED_COLOR
-					elseif hover then theme:GetColor(HOVER_COLOR)
-					else theme:GetColor(DEFAULT_COLOR),
-		LayoutOrder = layoutOrder,
-		-- BackgroundColor3 = Color3.fromRGB(49, 59, 95),
-		Text = "",
-		[react.Event.MouseEnter] = function()
-			setHover(true)
-		end,
-		[react.Event.MouseLeave] = function()
-			setHover(false)
-		end,
-		[react.Event.MouseButton2Click] = function()
-			onRightClick(instance, layoutOrder)
-		end,
-		[react.Event.MouseButton1Click] = function()
-			onLeftClick(instance, layoutOrder)
-		end,
+		BackgroundColor3 = if selected
+			then SELECTED_COLOR
+			elseif hover then theme:GetColor(HOVER_COLOR)
+			else theme:GetColor(DEFAULT_COLOR),
+		BorderSizePixel = 0,
 	}, {
-		ListLayout = e("UIListLayout", {
-			FillDirection = Enum.FillDirection.Horizontal,
-			VerticalAlignment = Enum.VerticalAlignment.Center,
-			Padding = UDim.new(0, STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize / 3)
-		}),
-		Padding = e("UIPadding", {
-			PaddingLeft = UDim.new(0, STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize / 2)
-		}),
-		Icon = e("ImageLabel", {
+		e("TextButton", {
+			Size = UDim2.new(UDim.new(1, 0), UDim.new(0, 23)),
 			BackgroundTransparency = 1,
-			Size = UDim2.fromOffset(16, 16),
-			Image = ClassIcon.Image,
-			ImageRectSize = ClassIcon.ImageRectSize,
-			ImageRectOffset = ClassIcon.ImageRectOffset
-		}),
-		InstanceName = e(studiocomponents.Label, {
-			Text = instanceName,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			TextColorStyle = Enum.StudioStyleGuideColor.BrightText
+			LayoutOrder = layoutOrder,
+			-- BackgroundColor3 = Color3.fromRGB(49, 59, 95),
+			Text = "",
+			[react.Event.MouseEnter] = function()
+				setHover(true)
+			end,
+			[react.Event.MouseLeave] = function()
+				setHover(false)
+			end,
+			[react.Event.MouseButton2Click] = function()
+				onRightClick(instance, layoutOrder)
+			end,
+			[react.Event.MouseButton1Click] = function()
+				onLeftClick(instance, layoutOrder)
+			end,
+		}, {
+			ListLayout = e("UIListLayout", {
+				FillDirection = Enum.FillDirection.Horizontal,
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+				Padding = UDim.new(0, STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize / 3),
+			}),
+			Padding = e("UIPadding", {
+				PaddingLeft = UDim.new(0, STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize / 2),
+			}),
+			Icon = e("ImageLabel", {
+				BackgroundTransparency = 1,
+				Size = UDim2.fromOffset(16, 16),
+				Image = ClassIcon.Image,
+				ImageRectSize = ClassIcon.ImageRectSize,
+				ImageRectOffset = ClassIcon.ImageRectOffset,
+			}),
+			InstanceName = e(studiocomponents.Label, {
+				Text = instanceName,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				TextColorStyle = Enum.StudioStyleGuideColor.BrightText,
+			}),
 		}),
 	})
 end

@@ -27,8 +27,14 @@ export type MInstanceModule = {
 	) -> Instance
 }
 
-export type BuildTestSession = {[string]: string}?
-
 export type pluginRuntime = "studioEditMode" | "studioPlayTestClient" | "other"
+
+export type dateType = typeof(os.date("*t"))
+
+export type serializedInstance = {
+    data: string,
+    name: string,
+    className: string
+}
 
 return nil

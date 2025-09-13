@@ -4,7 +4,8 @@ local Selection = game:GetService("Selection")
 local ExplorerTrackedInstance = require(script.Parent.ExplorerTrackedInstance)
 local react = require(script.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
 local studiocomponents = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
-local server = require(script.Parent.Parent.Parent.server)
+local BuildTestServer = require(script.Parent.Parent.Parent.BuildTestServer)
+local InstanceTracker = require(script.Parent.Parent.Parent.BuildTestServer.InstanceTracker)
 local modifierKey = require(script.Parent.Parent.Parent.utils.modifierKey)
 
 local e = react.createElement
@@ -26,14 +27,14 @@ type modifierKeys = {
 }
 
 local function createExplorerState(instances: {Instance}): explorerState
-	local selectedTrackedInstances = server.getSelectedTrackedInstances()
+	local selectedTrackedInstances = InstanceTracker:getSelectedTracked()
 	local lastSelectedTrackedInstance
 
     local selectedInstances = {}
 	--
 	for _, selectedInstance in pairs(Selection:Get()) do
-		if server.isInstanceTracked(selectedInstance) then
-			local id = server.getInstanceTrackId(selectedInstance)
+		if InstanceTracker:isTracked(selectedInstance) then
+			local id = InstanceTracker.getTrackId(selectedInstance)
 
 			selectedInstances[id] = selectedInstance
 			lastSelectedTrackedInstance = selectedInstance
@@ -41,15 +42,15 @@ local function createExplorerState(instances: {Instance}): explorerState
 	end
 
 	local trackedInstances = {}
-
-	for i, instance in pairs(instances) do
-		local id = server.getInstanceTrackId(instance)
-
+    local i = 1
+	for id, instance in pairs(instances) do
 		trackedInstances[i] = {
 			ref = instance,
 			selected = if table.find(selectedTrackedInstances, instance) then true else false,
 			id = id,
 		}
+
+        i += 1
 	end
 
 	local lastSelectedIndex
@@ -67,35 +68,31 @@ local function createExplorerState(instances: {Instance}): explorerState
 end
 
 function TrackedInstanceExplorer()
-	local explorerState, setExplorerState = react.useState(createExplorerState(server.getTrackedInstances()))
+	local explorerState, setExplorerState = react.useState(createExplorerState(InstanceTracker:getTracked()))
 	local modifierKeysRef = react.useRef({
 		shift = false,
 		control = false
 	} :: modifierKeys)
 
 	react.useEffect(function()
-		local instanceAddedConnection = server.instanceTracked:Connect(function()
-			setExplorerState(createExplorerState(server.getTrackedInstances()))
-		end)
-		local instanceRemovedConnection = server.instanceUntracked:Connect(function()
-			setExplorerState(createExplorerState(server.getTrackedInstances()))
-		end)
+		local trackChangedConnection = InstanceTracker.trackChanged:Connect(function()
+			setExplorerState(createExplorerState(InstanceTracker:getTracked()))
+        end)
 
 		return function()
-			instanceAddedConnection:Disconnect()
-			instanceRemovedConnection:Disconnect()
+            trackChangedConnection:Disconnect()
 		end
 	end, {})
 
 	react.useEffect(function()
 		local connection = Selection.SelectionChanged:Connect(function()
-			setExplorerState(createExplorerState(server.getTrackedInstances()))
+			setExplorerState(createExplorerState(InstanceTracker:getTracked()))
 		end)
 
 		return function()
 			connection:Disconnect()
 		end
-	end)
+	end, {})
 
 	local updateModifierKeys = react.useCallback(function(_, inputObject: InputObject)
 		local currentModifierKeys = modifierKeysRef.current
@@ -173,7 +170,6 @@ function TrackedInstanceExplorer()
 			Size = UDim2.fromScale(1, 1),
 			Layout = {
 				ClassName = "UIListLayout",
-				Padding = UDim.new(0, 1),
 				SortOrder = Enum.SortOrder.LayoutOrder
 			}
 		}, children)

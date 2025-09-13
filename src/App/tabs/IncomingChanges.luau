@@ -4,7 +4,11 @@ local studiocomponents =
 local useTheme = require(
 	script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme
 )
-local server = require(script.Parent.Parent.Parent.server)
+local BuildTestServer = require(script.Parent.Parent.Parent.BuildTestServer)
+local DiffSynchronizer = require(script.Parent.Parent.Parent.BuildTestServer.DiffSynchronizer)
+local Table = require(script.Parent.Parent.Parent.utils.Table)
+local deepClone = require(script.Parent.Parent.Parent.utils.deepClone)
+local DiffSynchronizer = BuildTestServer.DiffSynchronizer
 local ChangedInstance = require(script.Parent.Parent.components.ChangedInstance)
 local ChangesList = require(script.Parent.Parent.components.ChangesList)
 local Padding = require(script.Parent.Parent.components.Padding)
@@ -14,12 +18,18 @@ local DEFAULT_TEXT_SIZE = STUDIO_COMPONENTS_CONSTANTS.DefaultTextSize
 
 local e = react.createElement
 
-export type incomingChangesProps = {
-	changedInstances: { Instance },
-}
+function IncomingChanges()
+    local diffs, setDiffs = react.useState(DiffSynchronizer:getDiffs())
 
-function IncomingChanges(props: incomingChangesProps)
-	local changedInstances = props.changedInstances
+    react.useEffect(function()
+        local connection = DiffSynchronizer.diffsChanged:Connect(function(diffs)
+            setDiffs(deepClone(diffs))
+        end)
+
+        return function()
+            connection:Disconnect()
+        end
+    end, {})
 
 	local theme = useTheme()
 
@@ -47,7 +57,7 @@ function IncomingChanges(props: incomingChangesProps)
 			}),
 		}),
 		ChangeList = e(ChangesList, {
-			changedInstances = changedInstances,
+			diffs = diffs,
 		}),
 		QuickActionMenu = e("Frame", {
 			LayoutOrder = 2,
@@ -90,33 +100,29 @@ function IncomingChanges(props: incomingChangesProps)
 					HorizontalFlex = Enum.UIFlexAlignment.Fill,
 				}),
 				AcceptOverOriginalButton = e(studiocomponents.MainButton, {
-					Text = "Save over original",
+					Text = "Override",
 					Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
 					OnActivated = function()
-						local trackIdList = {}
+						local diffIds = {}
 
-						for _, trackedInstance in pairs(changedInstances) do
-							local trackId = server.getInstanceTrackId(trackedInstance)
-
-							table.insert(trackIdList, trackId)
+						for diffId, _ in pairs(diffs) do
+                            table.insert(diffIds, diffId)
 						end
 
-						server.acceptOverOriginal(trackIdList)
+                        DiffSynchronizer:resolveDiffs(diffIds, "override")
 					end,
 				}),
 				AcceptUnderFolderButton = e(studiocomponents.MainButton, {
-					Text = "Save under folder",
+					Text = "Save under dump",
 					Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
 					OnActivated = function()
-						local trackIdList = {}
+						local diffIds = {}
 
-						for _, trackedInstance in pairs(changedInstances) do
-							local trackId = server.getInstanceTrackId(trackedInstance)
-
-							table.insert(trackIdList, trackId)
+						for diffId, _ in pairs(diffs) do
+                            table.insert(diffIds, diffId)
 						end
 
-						server.acceptUnderFolder(trackIdList)
+                        DiffSynchronizer:resolveDiffs(diffIds, "dump")
 					end,
 				}),
 			}),
@@ -125,15 +131,13 @@ function IncomingChanges(props: incomingChangesProps)
 				Text = "Dismiss",
 				Size = UDim2.new(UDim.new(1, 0), UDim.new(0, DEFAULT_TEXT_SIZE * 2)),
 				OnActivated = function()
-					local trackIdList = {}
+                    local diffIds = {}
 
-					for _, trackedInstance in pairs(changedInstances) do
-						local trackId = server.getInstanceTrackId(trackedInstance)
+                    for diffId, _ in pairs(diffs) do
+                        table.insert(diffIds, diffId)
+                    end
 
-						table.insert(trackIdList, trackId)
-					end
-
-					server.declineChange(trackIdList)
+                    DiffSynchronizer:resolveDiffs(diffIds, "dismiss")
 				end,
 			}),
 		}),

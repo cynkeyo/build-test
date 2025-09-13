@@ -1,6 +1,6 @@
 name = "cynkeyo/build_test"
-version = "0.1.0"
-description = "Roblox Studio plugin that provides the user with playtest mode building tools that syncs up changes to edit mode."
+version = "1.0.0"
+description = "Roblox Studio plugin that provides the user with playtest mode DataModel syncing"
 authors = ["cynkeyo"]
 license = "MIT"
 

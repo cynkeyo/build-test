@@ -9,12 +9,14 @@ return function(
 	local finishType = finishType or Enum.FinishRecordingOperation.Append
 
 	if ChangeHistoryService:IsRecordingInProgress(actionId) then
-		ChangeHistoryService:FinishRecording(actionId, Enum.FinishRecordingOperation.Cancel)
+		ChangeHistoryService:FinishRecording(actionId, Enum.FinishRecordingOperation.Commit)
 	end
 
 	local recording = ChangeHistoryService:TryBeginRecording(actionId, actionName)
 
-	action()
+    action()
 
-	ChangeHistoryService:FinishRecording(recording, finishType)
+    if recording then
+        ChangeHistoryService:FinishRecording(recording, finishType)
+    end
 end

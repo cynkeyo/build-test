@@ -1,31 +1,33 @@
 local StudioService = game:GetService("StudioService")
 
+local DiffSynchronizer = require(script.Parent.Parent.Parent.BuildTestServer.DiffSynchronizer)
 local react = require(script.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
-local studiocomponents = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
-local useTheme = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
+local studiocomponents =
+	require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
+local useTheme = require(
+	script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme
+)
 
 local STUDIO_COMPONENTS_CONSTANTS = studiocomponents.Constants
 local DEFAULT_COLOR = Enum.StudioStyleGuideColor.MainBackground
-local SELECTED_COLOR = Color3.fromRGB(49, 59, 95)
-local HOVER_COLOR = Enum.StudioStyleGuideColor.Button
 
 local e = react.createElement
 
-type trackedInstanceProps = {
+type changedInstanceProps = {
 	Name: string,
 	ClassName: string,
-	TrackId: string,
 	LayoutOrder: number,
-	OnAcceptOverOriginal: (trackId: string) -> (),
-	OnAcceptUnderFolder: (trackId: string) -> (),
-	OnDecline: (trackId: string) -> (),
+	DiffType: DiffSynchronizer.diffType,
+	OnAcceptOverOriginal: () -> (),
+	OnAcceptUnderFolder: () -> (),
+	OnDecline: () -> (),
 }
 
-function ChangedInstance(props: trackedInstanceProps)
+function ChangedInstance(props: changedInstanceProps)
 	local name = props.Name
-    local trackId = props.TrackId
 	local layoutOrder = props.LayoutOrder
 	local className = props.ClassName
+	local diffType : DiffSynchronizer.diffType = props.DiffType
 	local onAcceptOverOriginal = props.OnAcceptOverOriginal
 	local onAcceptUnderFolder = props.OnAcceptUnderFolder
 	local onDecline = props.OnDecline
@@ -39,7 +41,7 @@ function ChangedInstance(props: trackedInstanceProps)
 		BackgroundTransparency = 0,
 		BackgroundColor3 = theme:GetColor(DEFAULT_COLOR),
 		LayoutOrder = layoutOrder,
-        BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border, Enum.StudioStyleGuideModifier.Default)
+		BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border, Enum.StudioStyleGuideModifier.Default),
 		-- BackgroundColor3 = Color3.fromRGB(49, 59, 95),
 	}, {
 		ListLayout = e("UIListLayout", {
@@ -64,7 +66,7 @@ function ChangedInstance(props: trackedInstanceProps)
 			Text = name,
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextColorStyle = Enum.StudioStyleGuideColor.BrightText,
-            TextTruncate = Enum.TextTruncate.AtEnd,
+			TextTruncate = Enum.TextTruncate.AtEnd,
 			Size = UDim2.fromOffset(0, studiocomponents.Constants.DefaultTextSize),
 		}, {
 			FlexItem = e("UIFlexItem", {
@@ -75,7 +77,7 @@ function ChangedInstance(props: trackedInstanceProps)
 			LayoutOrder = 3,
 			Size = UDim2.fromScale(0, 1),
 			AutomaticSize = Enum.AutomaticSize.X,
-            BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border, Enum.StudioStyleGuideModifier.Default)
+			BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border, Enum.StudioStyleGuideModifier.Default),
 		}, {
 			ListLayout = e("UIListLayout", {
 				SortOrder = Enum.SortOrder.LayoutOrder,
@@ -83,6 +85,7 @@ function ChangedInstance(props: trackedInstanceProps)
 				VerticalAlignment = Enum.VerticalAlignment.Center,
 			}),
 			AcceptOverOriginalButton = e(studiocomponents.Button, {
+				Visible = diffType == "changed",
 				LayoutOrder = 1,
 				Size = UDim2.fromOffset(24, 24),
 				Icon = {
@@ -91,9 +94,7 @@ function ChangedInstance(props: trackedInstanceProps)
 					RectSize = Vector2.new(16, 16),
 					RectOffset = Vector2.new(0, 0),
 				},
-                OnActivated = function()
-                    onAcceptOverOriginal(trackId)
-                end,
+				OnActivated = onAcceptOverOriginal,
 			}),
 			AcceptUnderFolderButton = e(studiocomponents.Button, {
 				LayoutOrder = 2,
@@ -104,9 +105,7 @@ function ChangedInstance(props: trackedInstanceProps)
 					RectSize = Vector2.new(16, 16),
 					RectOffset = Vector2.new(0, 0),
 				},
-                OnActivated = function()
-                    onAcceptUnderFolder(trackId)
-                end,
+				OnActivated = onAcceptUnderFolder,
 			}),
 			DeclineButton = e(studiocomponents.Button, {
 				LayoutOrder = 2,
@@ -114,12 +113,10 @@ function ChangedInstance(props: trackedInstanceProps)
 				Icon = {
 					Image = "rbxassetid://78931432174335",
 					Size = Vector2.new(16, 16),
-					RectSize = Vector2.new(16, 16),
+					RectSize = Vector2.new(32, 32),
 					RectOffset = Vector2.new(0, 0),
 				},
-                OnActivated = function()
-                    onDecline(trackId)
-                end,
+				OnActivated = onDecline,
 			}),
 		}),
 	})

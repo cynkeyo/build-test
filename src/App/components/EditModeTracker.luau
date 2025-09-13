@@ -3,7 +3,8 @@ local Selection = game:GetService("Selection")
 local react = require(script.Parent.Parent.Parent.packages[".pesde"]["jsdotlua_react-reconciler@17.2.1"].react)
 local studiocomponents = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents)
 local useTheme = require(script.Parent.Parent.Parent.packages[".pesde"]["sircfenner_studiocomponents@1.2.0"].studiocomponents.Hooks.useTheme)
-local server = require(script.Parent.Parent.Parent.server)
+local BuildTestServer = require(script.Parent.Parent.Parent.BuildTestServer)
+local InstanceTracker = BuildTestServer.InstanceTracker
 local plural = require(script.Parent.Parent.Parent.utils.plural)
 
 local STUDIO_COMPONENTS_CONSTANTS = studiocomponents.Constants
@@ -23,11 +24,11 @@ function EditModeTracker(props: editModeTracker)
 
 	local theme = useTheme()
 
-	local selectedInstances, setSelectedInstances = react.useState(server.getSelectedTrackedInstances())
+	local selectedInstances, setSelectedInstances = react.useState(InstanceTracker:getSelectedTracked())
 
 	react.useEffect(function()
 		local connection = Selection.SelectionChanged:Connect(function()
-			setSelectedInstances(server.filterValidInstances(Selection:Get()))
+			setSelectedInstances(InstanceTracker.filterValidInstances(Selection:Get()))
 		end)
 
 		return function()
@@ -93,7 +94,7 @@ function EditModeTracker(props: editModeTracker)
 				Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
 				Disabled = not hasSelectedInstances,
 				OnActivated = function()
-                    server.trackInstances(selectedInstances)
+                    InstanceTracker:track(selectedInstances)
 					Selection:Set({})
 				end,
 			}),
@@ -102,7 +103,7 @@ function EditModeTracker(props: editModeTracker)
 				Size = UDim2.fromOffset(DEFAULT_TEXT_SIZE * 5, DEFAULT_TEXT_SIZE * 2),
 				Disabled = not hasSelectedInstances,
 				OnActivated = function()
-                    server.untrackInstances(selectedInstances)
+                    InstanceTracker:untrack(selectedInstances)
 					Selection:Set({})
 				end,
 			})
